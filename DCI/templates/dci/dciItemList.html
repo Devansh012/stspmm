@@ -1,0 +1,64 @@
+{% extends 'registration/base.html' %}
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<a href="{% url 'dciOfDciGroup' dciGroup.dci.id %}" style="text-decoration: none;"><button type="button" class="btn btn-secondary btn-sm"><span style="font-size: 1.2em;">&#8592; Back</span> <!-- Arrow with Back text --></button></a>
+
+<a href="{% url 'dciItemCreateView' dciGroup.id %}"><button type="button" class="btn btn-primary btn-lg" style="float:right;">Add New</button></a>
+</div>
+
+  <h1>{{ dciGroup.name }}: DCIItem List</h1>
+
+  <!-- File Upload Form -->
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ upload_form.as_p }}
+    <button type="submit" class="btn btn-success">Upload Excel</button>
+  </form>
+
+  <!-- DCI Item Table -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>sNo</th>
+        <th>Item Code</th>
+        <th>Name</th>
+        <th>Document No</th>
+        <th>Description</th>
+        <th>Likely Submission Date</th>
+        <th>Weightage</th>
+        <th>Associated Cost</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dt in dciItems %}
+        <tr>
+          <td>{{ dt.sNo }}</td>
+          <td>{{ dt.itemCode }}</td>
+          <td>{{ dt.name }}</td>
+          <td>{{ dt.documentNo }}</td>
+          <td>{{ dt.description }}</td>
+          <td>{{ dt.likelySubmissionDate }}</td>
+          <td>{{ dt.weightage }}</td>
+          <td>{{ dt.associatedCost }}</td>
+          <td>
+            <a href="{% url 'dciItemUpdateView' dt.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
+            <form action="{% url 'dciItemDeleteView' dt.id %}"  method="post" style="display:inline;"  id="delete-form-{{ dt.id }}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <script>
+              document.querySelector('#delete-form-{{ dt.id }}').addEventListener('submit', function (event) {
+                if (!confirm('Are you sure you want to delete this item "{{ dt.name }}"?')) {
+                  event.preventDefault() // Prevent form submission if the user cancels
+                }
+              })
+            </script>
+        
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

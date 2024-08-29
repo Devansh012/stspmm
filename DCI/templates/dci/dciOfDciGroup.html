@@ -1,0 +1,47 @@
+{% extends 'registration/base.html' %}
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <a href="{% url 'dciList' %}" style="text-decoration: none;"><button type="button" class="btn btn-secondary btn-sm"><span style="font-size: 1.2em;">&#8592; Back</span> <!-- Arrow with Back text --></button></a>
+  <a href="{% url 'dciGroupCreateView' id %}"><button type="button" class="btn btn-primary btn-lg">Add New</button></a>
+</div>
+
+  <h2>DCI Group for {{ dci.name }}</h2>
+
+
+  <table class="table">
+    <thead>
+      <tr class="m-5 p-8">
+        <th>Name</th>
+        <th>Group Code</th>
+        <th>DCI Item</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dg in dciGroup %}
+        <tr>
+          <td>{{ dg.name }}</td>
+          <td>{{ dg.groupCode }}</td>
+          <td>
+            <a href="{% url 'dciItemList' dg.id %}"><button type="button" class="btn btn-primary">DCI Item</button></a>
+          </td>
+          <td>
+            <a href="{% url 'dciGroupUpdateView' dg.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
+            <form action="{% url 'dciGroupDeleteView' dg.id %}" method="post" style="display:inline;" id="delete-form-{{ dg.id }}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <script>
+              document.querySelector('#delete-form-{{ dg.id }}').addEventListener('submit', function (event) {
+                if (!confirm('Are you sure you want to delete this item "{{ dg.name }}"?')) {
+                  event.preventDefault() // Prevent form submission if the user cancels
+                }
+              })
+            </script>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "registration/base.html" %}
+{% block content%}
+    <h2>Document Submission Agency Type List</h2>
+    {% comment %} <form method="POST" action="{% url 'dsatList' %}">
+      {% csrf_token %}
+      <div class="container mt-3"></div>
+    </form>
+     {% endcomment %}
+   <a href="{% url 'dsatCreateView' %}">
+   <button type="button" class="btn btn-primary btn-sm " style="float:right;" >Add New</button>
+   </a>
+
+    <table class = "table">
+      <tr class="m-5 p-8">
+        <td>Name</td>
+        <td>Actions</td>
+     </tr>
+      {% for dt in dsat %}
+        <tr>
+          <td>{{dt.name }}</td>         
+          <td>
+            <a href="{% url 'dsatUpdateView' dt.id %}">  
+                 <button type="button" class="btn btn-primary">Edit</button>
+            </a>
+            <form action="{% url 'dsatDeleteView' dt.id %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </td>
+       
+        </tr>
+      {% endfor %}
+    </table>
+  {% endblock %}

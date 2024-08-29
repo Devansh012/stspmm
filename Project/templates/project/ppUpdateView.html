@@ -1,0 +1,15 @@
+{% extends "registration/base.html" %}
+{% block content %}
+<div class='main' class="form-group">
+    <h2>Update Project Proposal</h2>
+    <form method = "POST"  method="get" enctype="multipart/form-data" >
+        
+
+        {% csrf_token %}
+        {{form.as_p}}
+        
+        <button type="submit" class="btn btn-primary">Save changes</button>
+ 
+    </form>
+</div>
+{% endblock %}

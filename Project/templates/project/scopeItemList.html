@@ -1,0 +1,39 @@
+{% extends "registration/base.html" %}
+{% block content%}
+    <h2>Scope Item List</h2>
+    <form method="POST" action="{% url 'scopeItemList' %}">
+      {% csrf_token %}
+      <div class="container mt-3"></div>
+    </form>
+    
+   <a href="{% url 'scopeItemCreateView' %}">
+   <button type="button" class="btn btn-primary btn-sm " style="float:right;" >Add New</button>
+   </a>
+
+    <table class = "table">
+      <tr class="m-5 p-8">
+        <td>Name</td>
+        <td>Actions</td>
+     </tr>
+      {% for si in scopeItems %}
+        <tr>
+          <td>{{si.name }}</td>         
+          <td>
+            <a href="{% url 'scopeItemUpdateView' si.id %}">   <button type="button" class="btn btn-primary">Edit</button></a>
+            <form action="{% url 'scopeItemDeleteView' si.id %}" method="post" style="display:inline;" id="delete-form-{{ si.id }}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <script>
+              document.querySelector('#delete-form-{{ sb.id }}').addEventListener('submit', function (event) {
+                if (!confirm('Are you sure you want to delete this item "{{ sb.name }}"?')) {
+                  event.preventDefault() // Prevent form submission if the user cancels
+                }
+              })
+            </script>
+          </td>
+       
+        </tr>
+      {% endfor %}
+    </table>
+  {% endblock %}

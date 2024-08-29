@@ -1,0 +1,46 @@
+{% extends "registration/base.html" %}
+{% block content %}
+    <h2>Hinderances List</h2>
+    
+    <a href="{% url 'hinderancesCreateView' %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
+    </a>
+
+    <table class="table" >
+        <tr>
+            <td>DCI Item</td>
+            <td>Date Of Occurrence</td>
+            <td>Description</td>
+            <td>Associated Staff</td>
+            <td>Cleared</td>
+            <td>Cleared Date</td>
+            <td>Follow Up</td>
+            <td>Actions</td>
+        </tr>
+        {% for hd in hinderances %}
+            <tr>
+                <td>{{hd.dciItem}}</td>
+                <td>{{ hd.dateOfOccurrence }}</td>
+                <td>{{ hd.description }}</td>
+                <td>{{hd.associatedStaff}}</td>
+                <td>{{ hd.cleared }}</td> 
+                <td>{{ hd.clearedDate }}</td>   
+                <td><a href="{% url 'hinderanceFollowUpList' hd.id %}"><button type="button" class="btn btn-primary">Follow Up</button></a></td>
+                <td>
+                    <a href="{% url 'hinderancesUpdateView' hd.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
+                    <form action="{% url 'hinderancesDeleteView' hd.id %}" method="post" style="display:inline;" id="delete-form-{{ hd.id }}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                    <script>
+                        document.querySelector('#delete-form-{{ hd.id }}').addEventListener('submit', function (event) {
+                          if (!confirm('Are you sure you want to delete this item "{{ hd.name }}"?')) {
+                            event.preventDefault() // Prevent form submission if the user cancels
+                          }
+                        })
+                      </script>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

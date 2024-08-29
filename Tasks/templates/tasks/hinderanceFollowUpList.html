@@ -1,0 +1,40 @@
+{% extends "registration/base.html" %}
+{% block content %}
+    <h2>Hinderance Follow Up List for {{ hinderance.dciItem }}</h2>
+    
+    <a href="{% url 'hinderanceFollowUpCreateView' id %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
+    </a>
+
+    <table class="table">
+        <tr>
+            <td>Follow Up Date</td>
+            <td>Follow Up Description</td>
+            <td>Document</td>
+            <td>Actions</td>
+        </tr>
+        {% for hf in hinderanceFollowUp %}
+            <tr>
+                <td>{{ hf.followUpDate }}</td>
+                <td>{{ hf.followUpDescription }}</td>
+                <td>
+                    <a href="{% url 'documentDownloadView' hf.id %}"><button type="button" class="btn btn-primary">Download</button></a>
+                </td>
+                <td>
+                    <a href="{% url 'hinderanceFollowUpUpdateView' hf.id %}"> <button type="button" class="btn btn-primary">Edit</button></a>
+                    <form action="{% url 'hinderanceFollowUpDeleteView' hf.id %}" method="post" style="display:inline;" id="delete-form-{{ hf.id }}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                    <script>
+                        document.querySelector('#delete-form-{{ hf.id }}').addEventListener('submit', function (event) {
+                          if (!confirm('Are you sure you want to delete this item "{{ hf.name }}"?')) {
+                            event.preventDefault() // Prevent form submission if the user cancels
+                          }
+                        })
+                      </script>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

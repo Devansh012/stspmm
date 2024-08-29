@@ -1,0 +1,43 @@
+{% extends "registration/base.html" %}
+{% block content %}
+    <h2>Tasks List</h2>
+
+    <a href="{% url 'tasksCreateView' %}"><button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button></a>
+
+    <table class="table">
+        <tr>
+            <td>Task Name</td>
+            <td>Task Description</td>
+            <td>Assignment Date</td>
+            <td>Target Date Of Completion</td>
+            <td>Project Name</td>  <!-- Added Project Name column -->
+            <td>Task Activities</td>
+            <td>Actions</td>
+        </tr>
+        {% for tk in tasks %}
+        <tr>
+            <td>{{ tk.taskName }}</td>
+            <td>{{ tk.taskDescription }}</td>
+            <td>{{ tk.assignmentDate }}</td>
+            <td>{{ tk.targetDateOfCompletion }}</td>
+            <td>{{ tk.project}}</td> <!-- Displaying Project Name -->
+            <td><a href="{% url 'taskActivitiesList' tk.id %}"><button type="button" class="btn btn-primary">Activities</button></a>
+            </td>
+            <td>
+                <a href="{% url 'tasksUpdateView' tk.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
+                <form action="{% url 'tasksDeleteView' tk.id %}" method="post" style="display:inline;" id="delete-form-{{ tk.id }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <script>
+                    document.querySelector('#delete-form-{{ tk.id }}').addEventListener('submit', function (event) {
+                      if (!confirm('Are you sure you want to delete this item "{{ tk.name }}"?')) {
+                        event.preventDefault() // Prevent form submission if the user cancels
+                      }
+                    })
+                  </script>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "registration/base.html" %}
+{% block content %}
+<h2 class="mt-0">Update DCI Group for {{ dci.name }}</h2>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a href="{% url 'dciOfDciGroup' form.instance.dci.id %}" class="btn btn-secondary">Cancel</a>
+
+</form>
+{% endblock %}

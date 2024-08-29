@@ -1,0 +1,43 @@
+{% extends "registration/base.html" %}
+{% block content%}
+    <h2>Project Lead</h2>
+    {% comment %} <form method="POST" action="{% url 'plList' %}">
+      {% csrf_token %}
+      <div class="container mt-3"></div>
+    </form> {% endcomment %}
+    
+   <a href="{% url 'plCreateView' %}">
+   <button type="button" class="btn btn-primary btn-sm " style="float:right;" >Add New</button>
+   </a>
+
+    <table class = "table">
+      <tr class="m-5 p-8">
+        <td>Project Name</td>
+        <td>Cost</td>
+        <td>Agency</td>
+        <td>Description</td>
+        <td>Source</td>
+        <td>Source Description</td>
+        <td>Actions</td>
+     </tr>
+      {% for pl in projectLead %}
+        <tr>
+          <td>{{pl.projectName }}</td>         
+          <td>{{pl.cost}}</td> 
+          <td>{{pl.agency}}</td>
+          <td>{{pl.description}}</td>
+          <td>{{pl.source}}</td>
+          <td>{{pl.sourceDescription}}</td>
+          <td>
+            <a href="{% url 'plUpdateView' pl.id %}">   <button type="button" class="btn btn-primary">Edit</button>
+            </a>
+            <form action="{% url 'plDeleteView' pl.id %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </td>
+       
+        </tr>
+      {% endfor %}
+    </table>
+  {% endblock %}

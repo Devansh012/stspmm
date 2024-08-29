@@ -1,0 +1,39 @@
+{% extends "registration/base.html" %}
+{% block content%}
+    <h2>Sector List</h2>
+    <form method="POST" action="{% url 'sectorList' %}">
+      {% csrf_token %}
+      <div class="container mt-3"></div>
+    </form>
+    
+   <a href="{% url 'sectorCreateView' %}">
+   <button type="button" class="btn btn-primary btn-sm " style="float:right;" >Add New</button>
+   </a>
+
+    <table class = "table">
+      <tr class="m-5 p-8">
+        <td>Name</td>
+        <td>Actions</td>
+     </tr>
+      {% for sc in sector %}
+        <tr>
+          <td>{{sc.sectorName }}</td>         
+          <td>
+            <a href="{% url 'sectorUpdateView' sc.id %}">   <button type="button" class="btn btn-primary">Edit</button></a>
+            <form action="{% url 'sectorDeleteView' sc.id %}" method="post" style="display:inline;" id="delete-form-{{ sc.id }}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <script>
+              document.querySelector('#delete-form-{{ sc.id }}').addEventListener('submit', function (event) {
+                if (!confirm('Are you sure you want to delete this item "{{ sc.name }}"?')) {
+                  event.preventDefault() // Prevent form submission if the user cancels
+                }
+              })
+            </script>
+          </td>
+       
+        </tr>
+      {% endfor %}
+    </table>
+  {% endblock %}

@@ -1,0 +1,14 @@
+{% extends "registration/base.html" %}
+{% block content %}
+<div class='main'>
+    <h2>Update Task</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <a href="{% url 'tasksList' %}">
+            <button type="button" class="btn btn-secondary">Cancel</button>
+        </a>
+    </form>
+</div>
+{% endblock %}

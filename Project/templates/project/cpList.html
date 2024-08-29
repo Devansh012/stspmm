@@ -1,0 +1,49 @@
+{% extends "registration/base.html" %}
+{% block content%}
+    <h2>Contact Persons</h2>
+    <form method="POST" action="{% url 'cpList' %}">
+      {% csrf_token %}
+      <div class="container mt-3"></div>
+    </form>
+    
+   <a href="{% url 'cpCreateView' %}">
+   <button type="button" class="btn btn-primary btn-sm " style="float:right;" >Add New</button>
+   </a>
+
+    <table class = "table">
+      <tr class="m-5 p-8">
+        <td>Name</td>
+        <td>Position</td>
+        <td>Email</td>
+        <td>Mobile 1</td>
+        <td>Mobile 2</td>
+        <td>Landline</td>
+        <td>Actions</td>
+     </tr>
+      {% for cp in contactPersons %}
+        <tr>
+          <td>{{cp.name }}</td>         
+          <td>{{cp.position}}</td> 
+          <td>{{cp.email}}</td>
+          <td>{{cp.mobile1}}</td>
+          <td>{{cp.mobile2}}</td>
+          <td>{{cp.landline}}</td>
+          <td>
+            <a href="{% url 'cpUpdateView' cp.id %}">   <button type="button" class="btn btn-primary">Edit</button></a>
+            <form action="{% url 'cpDeleteView' cp.id %}" method="post" style="display:inline;" id="delete-form-{{ cp.id }}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <script>
+              document.querySelector('#delete-form-{{ cp.id }}').addEventListener('submit', function (event) {
+                if (!confirm('Are you sure you want to delete this item "{{ cp.name }}"?')) {
+                  event.preventDefault() // Prevent form submission if the user cancels
+                }
+              })
+            </script>
+          </td> 
+       
+        </tr>
+      {% endfor %}
+    </table>
+  {% endblock %}

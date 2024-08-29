@@ -1,0 +1,46 @@
+{% extends "registration/base.html" %}
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <a href="{% url 'folderList' %}" style="text-decoration: none;"><button type="button" class="btn btn-secondary btn-sm"><span style="font-size: 1.2em;">&#8592; Back</span> <!-- Arrow with Back text --></button></a>
+    <a href="{% url 'documentCreateView' folder.id %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
+    </a>  </div>
+
+    <h2>Document List for {{ folder.name }}</h2>
+    
+    <table class="table">
+        <tr class="m-5 p-8">
+            <th>Name</th>
+            <th>Created Date</th>
+            <th>Created By</th>
+            <th>Document</th>
+            <th>Actions</th>
+        </tr>
+        {% for doc in documents %}
+        <tr>
+            <td>{{ doc.name }}</td>
+            <td>{{ doc.createdDate }}</td>
+            <td>{{doc.createdBy}}</td>
+            <td>
+                <a href="{% url 'documentsDownloadsView' doc.id %}"><button type="button" class="btn btn-primary">Download</button></a>
+            </td>
+            <td>
+                <a href="{% url 'documentUpdateView' doc.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
+                <form action="{% url 'documentDeleteView' doc.id %}" method="post" style="display:inline;" id="delete-form-{{ doc.id }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <script>
+                    document.querySelector('#delete-form-{{ doc.id }}').addEventListener('submit', function (event) {
+                      if (!confirm('Are you sure you want to delete this item "{{ doc.name }}"?')) {
+                        event.preventDefault() // Prevent form submission if the user cancels
+                      }
+                    })
+                  </script>
+                
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

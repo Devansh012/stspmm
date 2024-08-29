@@ -1,0 +1,31 @@
+{% extends "registration/base.html" %}
+{% block content %}
+    <h2> Document Submission Agency List</h2>
+    
+    <a href="{% url 'dsaCreateView' id %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
+    </a>
+
+    <table class="table">
+        <tr class="m-5 p-8">
+            <td>Name</td>
+            <td>Type</td>
+            <td>Contact Person</td>
+            <td>Actions</td>
+        </tr>
+        {% for dg in docSubAgency %}
+            <tr>
+                <td>{{ dg.name }}</td>
+                <td>{{dg.agencytype}}</td>
+                <td>{{dg.contactPersons}}</td>
+                <td>
+                    <a href="{% url 'dsaUpdateView' dg.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
+                    <form action="{% url 'dsaDeleteView' dg.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
