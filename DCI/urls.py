@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('dciList', views.dciList, name='dciList'),
+    path('dci/copy/<int:id>/', views.copyDci, name='copyDci'),
     path('dciCreateView',views.dciCreateView, name="dciCreateView"),
     path('dciUpdateView/<id>', views.dciUpdateView, name="dciUpdateView"),
     path('dciDeleteView/<id>',views.dciDeleteView,name ="dciDeleteView"),

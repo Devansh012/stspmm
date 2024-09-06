@@ -1,43 +1,58 @@
 {% extends "registration/base.html" %}
-{% block content%}
-    <h2>Project Lead</h2>
-    {% comment %} <form method="POST" action="{% url 'plList' %}">
-      {% csrf_token %}
-      <div class="container mt-3"></div>
-    </form> {% endcomment %}
-    
-   <a href="{% url 'plCreateView' %}">
-   <button type="button" class="btn btn-primary btn-sm " style="float:right;" >Add New</button>
-   </a>
+{% block content %}
+    <h2>Project Lead List</h2>
 
-    <table class = "table">
-      <tr class="m-5 p-8">
-        <td>Project Name</td>
-        <td>Cost</td>
-        <td>Agency</td>
-        <td>Description</td>
-        <td>Source</td>
-        <td>Source Description</td>
-        <td>Actions</td>
-     </tr>
-      {% for pl in projectLead %}
-        <tr>
-          <td>{{pl.projectName }}</td>         
-          <td>{{pl.cost}}</td> 
-          <td>{{pl.agency}}</td>
-          <td>{{pl.description}}</td>
-          <td>{{pl.source}}</td>
-          <td>{{pl.sourceDescription}}</td>
-          <td>
-            <a href="{% url 'plUpdateView' pl.id %}">   <button type="button" class="btn btn-primary">Edit</button>
-            </a>
-            <form action="{% url 'plDeleteView' pl.id %}" method="post" style="display:inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-          </td>
-       
-        </tr>
-      {% endfor %}
+    <!-- Button to create a new Project Lead -->
+    <a href="{% url 'plCreateView' %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
+    </a>
+
+    <!-- Table displaying Project Leads -->
+    <table class="table table-striped table-hover mt-5">
+        <thead>
+            <tr class="m-5 p-8">
+                <th class="text-start">Project Name</th>
+                <th class="text-start">Cost</th>
+                <th class="text-start">Agency</th>
+                {% comment %} <th class="text-start">Description</th> {% endcomment %}
+                <th class="text-start">Source</th>
+                {% comment %} <th>Source Description</th> {% endcomment %}
+                <th class="text-end">Project Proposal</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pl in projectLeads %}
+                <tr>
+                    <td class="text-start">{{ pl.projectName }}</td>
+                    <td class="text-start">{{ pl.cost }}</td>
+                    <td class="text-start">{{ pl.agency }}</td>
+                    {% comment %} <td>{{ pl.description }}</td> {% endcomment %}
+                    <td class="text-start">{{ pl.source }}</td>
+                    {% comment %} <td>{{ pl.sourceDescription }}</td> {% endcomment %}
+                    <td class="text-end">
+                        <a href="{% url 'ppList' pl.id %}" title="View Project Proposal"><i class="fas fa-file-alt"></i></a>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'plUpdateView' pl.id %}" title="Edit ProjectLead"><i class="fas fa-edit"></i></a>
+                        <form action="{% url 'plDeleteView' pl.id %}" method="post" style="display:inline;" id="delete-form-{{ pl.id }}">
+                            {% csrf_token %}
+                           
+                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete ProjectLead">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                            
+                        </form>
+                        <script>
+                            document.querySelector('#delete-form-{{ pl.id }}').addEventListener('submit', function (event) {
+                                if (!confirm('Are you sure you want to delete this item "{{ pl.name }}"?')) {
+                                    event.preventDefault(); // Prevent form submission if the user cancels
+                                }
+                            });
+                        </script>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
-  {% endblock %}
+{% endblock %}

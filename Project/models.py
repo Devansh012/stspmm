@@ -5,10 +5,17 @@ class Sector(models.Model):
     sectorName = models.CharField(max_length=20)
     def __str__(self):
         return (self.sectorName)
-    
+
+class ScopeGroup(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name    
 
 class ScopeItem(models.Model):
     name = models.CharField(max_length=20)
+    scopeGroup = models.ForeignKey(ScopeGroup,blank=True,null=True, related_name='scope_items', on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 
@@ -33,7 +40,7 @@ class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='staff_profile', null=True, blank=True)
 
     def __str__(self):
-        return self.fathersName
+        return str (self.user)
 
 class ContactPerson(models.Model):
     name = models.CharField(max_length=30)
@@ -44,6 +51,9 @@ class ContactPerson(models.Model):
     landline = models.CharField(max_length=15, blank=True, null=True)
     client = models.ForeignKey(Client,on_delete=models.CASCADE,blank=True,null=True)
     # dsa = models.ForeignKey(DocumentSubmissionAgency,on_delete=models.CASCADE,null=True,blank=True)
+    address = models.TextField(blank=True, null=True)  # New field for address
+    image = models.ImageField(upload_to='contact_images/', blank=True, null=True)  # New field for image
+
 
     def __str__(self):
         return self.name

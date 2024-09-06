@@ -1,49 +1,57 @@
 {% extends "registration/base.html" %}
 {% block content %}
-    <h2>Hinderances List</h2>  
-
-
-    
-    
+    <h2>Hinderances List</h2>
     <a href="{% url 'hinderancesCreateView' %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
+             Add New
+        </button>
     </a>
 
-    <table class="table" >
-        <tr>
-            <td>DCI Item</td>
-            <td>Date Of Occurrence</td>
-            <td>Description</td>
-            <td>Associated Staff</td>
-            <td>Cleared</td>
-            <td>Cleared Date</td>
-            <td>Follow Up</td>
-            <td>Actions</td>
-        </tr>
-        {% for hd in hinderances %}
+    <table class="table table-striped table-hover mt-5">
+        <thead>
             <tr>
-                <td>{{hd.dciItem}}</td>
-                <td>{{ hd.dateOfOccurrence }}</td>
-                <td>{{ hd.description }}</td>
-                <td>{{hd.associatedStaff}}</td>
-                <td>{{ hd.cleared }}</td> 
-                <td>{{ hd.clearedDate }}</td>   
-                <td><a href="{% url 'hinderanceFollowUpList' hd.id %}"><button type="button" class="btn btn-primary">Follow Up</button></a></td>
-                <td>
-                    <a href="{% url 'hinderancesUpdateView' hd.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
-                    <form action="{% url 'hinderancesDeleteView' hd.id %}" method="post" style="display:inline;" id="delete-form-{{ hd.id }}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                    <script>
-                        document.querySelector('#delete-form-{{ hd.id }}').addEventListener('submit', function (event) {
-                          if (!confirm('Are you sure you want to delete this item "{{ hd.name }}"?')) {
-                            event.preventDefault() // Prevent form submission if the user cancels
-                          }
-                        })
-                      </script>
-                </td>
+                <th class="text-start">DCI Item</th>
+                <th class="text-start">Date Of Occurrence</th>
+                
+                <th class="text-start">Associated Staff</th>
+                <th class="text-start">Cleared</th>
+                <th class="text-start">Cleared Date</th>
+                <th class="text-end">Follow Up</th>
+                <th class="text-end">Actions</th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+            {% for hd in hinderances %}
+                <tr>
+                    <td class="text-start">{{ hd.dciItem }}</td>
+                    <td class="text-start">{{ hd.dateOfOccurrence }}</td>
+                   
+                    <td class="text-start">{{ hd.associatedStaff }}</td>
+                    <td class="text-start">{{ hd.cleared }}</td>
+                    <td class="text-start">{{ hd.clearedDate }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'hinderanceFollowUpList' hd.id %}" title="Follow Up">
+                            <i class="fas fa-list" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'hinderancesUpdateView' hd.id %}" title="Edit Hinderance"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                        <form action="{% url 'hinderancesDeleteView' hd.id %}" method="post" style="display:inline;" id="delete-form-{{ hd.id }}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Hinderance">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                        <script>
+                            document.querySelector('#delete-form-{{ hd.id }}').addEventListener('submit', function (event) {
+                                if (!confirm('Are you sure you want to delete this item "{{ hd.dciItem }}"?')) {
+                                    event.preventDefault(); // Prevent form submission if the user cancels
+                                }
+                            });
+                        </script>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

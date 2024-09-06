@@ -57,6 +57,41 @@ def dciDeleteView(request, id):
         return HttpResponseRedirect("/dci/dciList")
     return render(request, "dci/dciList.html")
 
+def copyDci(request, id):
+   
+    dci = get_object_or_404(DCI, id=id)
+    dci_groups = DCIGroup.objects.filter(dci=dci)
+    dci_items = DCIItem.objects.filter(dciGroup__in=dci_groups)
+
+    new_dci = DCI.objects.create(
+        name=f"Copy of {dci.name}",  
+        project=dci.project,          
+    )
+
+    for group in dci_groups:
+        new_group = DCIGroup.objects.create(
+            name=f"Copy of {group.name}",    
+            groupCode=group.groupCode,       
+            dci=new_dci                      
+        )
+        
+   
+        for item in dci_items.filter(dciGroup=group):
+            DCIItem.objects.create(
+                name=f"Copy of {item.name}",  
+                sNo=item.sNo,                 
+                dciGroup=new_group,      
+                itemCode=item.itemCode,
+                documentNo=item.documentNo,
+                description=item.description,
+                likelySubmissionDate=item.likelySubmissionDate,
+                weightage=item.weightage,
+                associatedCost=item.associatedCost,
+            )
+
+    return redirect("/dci/dciList")
+
+
 
 def dciOfDciGroup(request, id):
     dcigroup = DCIGroup.objects.filter(dci=id)
@@ -68,19 +103,19 @@ def dciOfDciGroup(request, id):
 
 def dciGroupCreateView(request, id):
     context = {}
-    
+
     # Fetch the DCI object
     dci = get_object_or_404(DCI, id=id)
-    
+
     if request.method == "POST":
-        form = DCIGroupForm(request.POST, request.FILES)
+        form = DCIGroupForm(request.POST, request.FILES, parent_dci=dci)
         if form.is_valid():
-            dci_group = form.save()
-            dci_group.dci_id = id  # Set the DCI ID
+            dci_group = form.save(commit=False)
+            dci_group.dci = dci  # Set the DCI directly
             dci_group.save()
             return redirect("dciOfDciGroup", id=id)
     else:
-        form = DCIGroupForm()
+        form = DCIGroupForm(parent_dci=dci)
     
     context["form"] = form
     context["id"] = id  # Pass the DCI ID to the template
@@ -89,12 +124,13 @@ def dciGroupCreateView(request, id):
     return render(request, "dci/dciGroupCreateView.html", context)
 
 
+
 def dciGroupUpdateView(request, id):
     obj = get_object_or_404(DCIGroup, id=id)
     dci = obj.dci
     context1 = {"dci": dci}
     
-    form = DCIGroupForm(request.POST or None, request.FILES or None, instance=obj)
+    form = DCIGroupForm(request.POST or None, request.FILES or None, instance=obj, parent_dci=dci)
 
     if form.is_valid():
         form.save()
@@ -129,71 +165,69 @@ def dciItemList(request, id):
             sheet = wb.active
 
             for row in sheet.iter_rows(min_row=2, values_only=True):
-                DCIItem.objects.create(
-                    sNo=row[0],
-                    itemCode=row[1],
-                    name=row[2],
-                    documentNo=row[3],
-                    description=row[4],
-                    likelySubmissionDate=row[5],
-                    weightage=row[6],
-                    associatedCost=row[7],
-                    dciGroup=dciGroup
-                )
+                if len(row) >= 4:  # Ensure the row has at least 4 elements
+                    DCIItem.objects.create(
+                        sNo=row[0],
+                        itemCode=row[1],
+                        name=row[2],
+                        documentNo=row[3],
+                        dciGroup=dciGroup
+                    )
+                else:
+                    # Handle rows that don't have enough columns
+                    messages.error(request, f"Row {row[0]} does not have enough columns.")
+
             dciItems = DCIItem.objects.filter(dciGroup=dciGroup)
 
     else:
         upload_form = ExcelUploadForm()
 
     context = {
-        "dciGroup": dciGroup,  # Pass the parent DCIGroup to the template
+        "dciGroup": dciGroup,
         "dciItems": dciItems,
         "upload_form": upload_form,
     }
     return render(request, "dci/dciItemList.html", context)
 
 
-
-
 def dciItemCreateView(request, id):
     dci_group = get_object_or_404(DCIGroup, id=id)
-    context = {'dciGroup': dci_group}
     
     if request.method == "POST":
-        form = DCIItemForm(request.POST or None, request.FILES or None)
+        form = DCIItemForm(request.POST or None, request.FILES or None, user=request.user, dci_group=dci_group)
         if form.is_valid():
-            new_item = form.save(commit=False)
-            new_item.dciGroup = dci_group  # Set the DCIGroup
-            new_item.save()
+            form.save()
             return redirect("dciItemList", id=id)
     else:
-        form = DCIItemForm()
-    
-    context["form"] = form
-    
+        form = DCIItemForm(dci_group=dci_group)
+
+    context = {
+        "form": form,
+        "dciGroup": dci_group,
+    }
+
     return render(request, "dci/dciItemCreateView.html", context)
+
 
 
 
 
 def dciItemUpdateView(request, id):
     obj = get_object_or_404(DCIItem, id=id)
-    dci_group = obj.dciGroup  # Get the associated DCIGroup instance
+    dci_group = obj.dciGroup
 
-    form = DCIItemForm(request.POST or None, request.FILES or None, instance=obj)
+    form = DCIItemForm(request.POST or None, request.FILES or None, instance=obj, user=request.user, dci_group=dci_group)
 
     if form.is_valid():
         form.save()
-        # Redirect to the dciItemList with the correct group id
-        return redirect(f"/dci/dciItemList{dci_group.id}/")
+        return redirect("dciItemList", id=dci_group.id)
 
     context = {
         "form": form,
-        "parent_name": dci_group.name  # Pass the DCIGroup name to the template
+        "parent_name": dci_group.name,
     }
 
     return render(request, "dci/dciItemUpdateView.html", context)
-
 
     
 def dciItemDeleteView(request, id):

@@ -2,13 +2,16 @@
 {% block content %}
 <form method="POST"  enctype="multipart/form-data">
 
-  <h3>Add New</h3>
+  <h3>Add New for {{ projectLead.projectName }}  </h3>
 
   {% csrf_token %}
 
   {{form.as_p}} 
  
   <button type="submit" class="btn btn-primary">Save changes</button>
+  <a href="{% url 'ppList' id %}">
+    <button type="button" class="btn btn-secondary">Cancel</button>
+</a>
    
 </form>
 {% endblock %}

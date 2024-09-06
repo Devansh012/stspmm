@@ -2,18 +2,19 @@ from django.urls import path
 from .import views
 
 urlpatterns = [
-    path('projectList/', views.projectList, name='projectList'),
-    path('projectCreateView/', views.projectCreateView, name='projectCreateView'),
-    path('projectUpdateView/<id>', views.projectUpdateView, name='projectUpdateView'),
-    path('projectDeleteView/<id>', views.projectDeleteView, name='projectDeleteView'),
 
     path('sectorList', views.sectorList, name="sectorList"),
     path('create',views.sectorCreateView, name="sectorCreateView"),
     path('update/<id>', views.sectorUpdateView, name="sectorUpdateView"),
     path('delete/<id>',views.sectorDeleteView,name ="sectorDeleteView"),
 
-    path('scopeItemList/', views.scopeItemList, name='scopeItemList'),
-    path('scopeItemCreateView/', views.scopeItemCreateView, name='scopeItemCreateView'),
+    path('scopeGroupList/', views.scopeGroupList, name='scopeGroupList'),
+    path('scopeGroupCreateView/', views.scopeGroupCreateView, name='scopeGroupCreateView'),
+    path('scopeGroupUpdateView/<id>', views.scopeGroupUpdateView, name='scopeGroupUpdateView'),
+    path('scopeGroupDeleteView/<id>', views.scopeGroupDeleteView, name='scopeGroupDeleteView'),
+    
+    path('scopeItemList/<int:id>/', views.scopeItemList, name='scopeItemList'),
+    path('scopeItemCreateView/<int:id>/', views.scopeItemCreateView, name='scopeItemCreateView'),
     path('scopeItemUpdateView/<id>', views.scopeItemUpdateView, name='scopeItemUpdateView'),
     path('scopeItemDeleteView/<id>', views.scopeItemDeleteView, name='scopeItemDeleteView'),
 
@@ -32,16 +33,20 @@ urlpatterns = [
     path('cpUpdateView/<int:id>/', views.cpUpdateView, name="cpUpdateView"),  
     path('cpDeleteView/<int:id>/', views.cpDeleteView, name="cpDeleteView"),  
 
-    path('plList/<int:id>', views.plList, name='plList'),
-    path('create/', views.plCreateView, name='plCreateView'),
-    path('update/<id>', views.plUpdateView, name='plUpdateView'),
-    path('delete/<id>', views.plDeleteView, name='plDeleteView'),
+    path('plList/', views.plList, name='plList'),
+    path('plCreateView/', views.plCreateView, name='plCreateView'),
+    path('plUpdateView/<id>', views.plUpdateView, name='plUpdateView'),
+    path('plDeleteView/<id>', views.plDeleteView, name='plDeleteView'),
 
     path('ppList/<int:id>/', views.ppList, name="ppList"),
     path('ppCreateView/<int:id>/',views.ppCreateView, name="ppCreateView"),
     path('ppUpdateView/<id>', views.ppUpdateView, name="ppUpdateView"),
     path('ppDeleteView/<id>',views.ppDeleteView,name ="ppDeleteView"),
 
+    path('projectList/<int:id>/', views.projectList, name='projectList'),
+    path('projectCreateView/<int:id>/', views.projectCreateView, name='projectCreateView'),
+    path('projectUpdateView/<id>', views.projectUpdateView, name='projectUpdateView'),
+    path('projectDeleteView/<id>', views.projectDeleteView, name='projectDeleteView'),
     
 ]
 

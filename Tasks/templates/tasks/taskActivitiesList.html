@@ -2,39 +2,48 @@
 {% block content %}
 <h2>Task Activities for {{ task.taskName }}</h2>
 <div>
-    <a href="{% url 'tasksList' %}" style="text-decoration: none;"><button type="button" class="btn btn-secondary btn-sm"><span style="font-size: 1.2em;">&#8592; Back</span> <!-- Arrow with Back text --></button></a>
-<a href="{% url 'taskActivitiesCreateView' task.id %}"><button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button></a>
+    <a href="{% url 'tasksList' %}" style="text-decoration: none;">
+        <button type="button" class="btn btn-secondary btn-sm">
+            <span style="font-size: 1.2em;">&#8592; Back</span> <!-- Arrow with Back text -->
+        </button>
+    </a>
+    <a href="{% url 'taskActivitiesCreateView' task.id %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
+            Add New
+        </button>
+    </a>
 </div>
-    <table class="table">
+<table class="table table-striped table-hover mt-3">
+    <thead>
         <tr>
-            {% comment %} <td><strong>Tasks</strong></td> {% endcomment %}
-            <td><strong>Date Of Entry</strong></td>
-            <td><strong>Activity Name</strong></td>
-            <td><strong>Activity Description</strong></td>
-            <td><strong>Actions</strong></td>
+            <th class="text-start">Date Of Entry</th>
+            <th class="text-start">Activity Name</th>
+            <th class="text-end">Actions</th>
         </tr>
-        
+    </thead>
+    <tbody>
         {% for ta in taskactivities %}
-            <tr>
-                {% comment %} <td>{{ ta.task }}</td> {% endcomment %}
-                <td>{{ ta.dateOfEntry }}</td>
-                <td>{{ ta.activityName }}</td>
-                <td>{{ ta.activityDescription }}</td>
-                <td>
-                    <a href="{% url 'taskActivitiesUpdateView' ta.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
-                    <form action="{% url 'taskActivitiesDeleteView' ta.id %}" method="post" style="display:inline;" id="delete-form-{{ ta.id }}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                    <script>
-                        document.querySelector('#delete-form-{{ ta.id }}').addEventListener('submit', function (event) {
-                          if (!confirm('Are you sure you want to delete this item "{{ ta.name }}"?')) {
-                            event.preventDefault() // Prevent form submission if the user cancels
-                          }
-                        })
-                      </script>
-                </td>
-            </tr>
+        <tr>
+            <td class="text-start">{{ ta.dateOfEntry }}</td>
+            <td class="text-start">{{ ta.activityName }}</td>
+            <td class="text-end">
+                <a href="{% url 'taskActivitiesUpdateView' ta.id %}" title="Edit Task Activity"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                <form action="{% url 'taskActivitiesDeleteView' ta.id %}" method="post" style="display:inline;" id="delete-form-{{ ta.id }}">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Task Activity">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
+                </form>
+                <script>
+                    document.querySelector('#delete-form-{{ ta.id }}').addEventListener('submit', function (event) {
+                        if (!confirm('Are you sure you want to delete this item "{{ ta.activityName }}"?')) {
+                            event.preventDefault(); // Prevent form submission if the user cancels
+                        }
+                    });
+                </script>
+            </td>
+        </tr>
         {% endfor %}
-    </table>
+    </tbody>
+</table>
 {% endblock %}

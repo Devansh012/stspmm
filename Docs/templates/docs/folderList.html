@@ -1,52 +1,63 @@
 {% extends "registration/base.html" %}
 {% block content %}
-    <h2>Folder List</h2>
-    <a href="{% url 'folderCreateView' %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
-    </a>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Created By</th>
-          <th>Created Date</th>
-          <th>Notes</th>
-          <th>Protected</th>
-          <th>Password</th>
-          <th>Documents</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for folder in folders %}
-        <tr>
-          <td>{{ folder.name }}</td>
-          <td>{{ folder.createdBy}}</td>
-          <td>{{ folder.createdDate }}</td>
-          <td>{{ folder.notes }}</td>
-          <td>{{ folder.protected }}</td>
-          <td>{{ folder.password }}</td>
-          <td>
-            <a href="{% url 'documentList' folder.id %}"><button type="button" class="btn btn-primary">Documents</button></a>
-          </td>
+<h2>Folder List</h2>
+<a href="{% url 'folderCreateView' %}">
+    <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
+</a>
 
-          <td>
-            <a href="{% url 'folderUpdateView' folder.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
-            <form action="{% url 'folderDeleteView' folder.id %}" method="post" style="display:inline;" id="delete-form-{{ folder.id }}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-            <script>
-              document.querySelector('#delete-form-{{ folder.id }}').addEventListener('submit', function (event) {
-                if (!confirm('Are you sure you want to delete this item "{{ folder.name }}"?')) {
-                  event.preventDefault() // Prevent form submission if the user cancels
-                }
-              })
-            </script>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<!-- Added mb-4 for margin-bottom to create space between button and table -->
+<table class="table table-striped table-hover mt-5">
+  <thead>
+    <tr class="text-center">
+      <th class="text-start">Name</th>
+      <th class="text-start">Created By</th>
+      <th class="text-start">Created Date</th>
+      <th class="text-start">Protected</th>
+      <th class="text-end">Documents</th>
+      <th class="text-end">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for folder in folders %}
+    <tr>
+      <td class="text-start">{{ folder.name }}</td>
+      <td class="text-start">{{ folder.createdBy }}</td>
+      <td class="text-start">{{ folder.createdDate }}</td>
+      <td class="text-start">{{ folder.protected }}</td>
+     
+      <td class="text-end">
+        <a href="{% url 'documentList' folder.id %}" data-bs-toggle="tooltip" title="View Documents">
+          <i class="fas fa-file-alt"></i> <!-- Replaced with a relevant icon for Documents -->
+        </a>
+      </td>
+      <td class="text-end">
+        <a href="{% url 'folderUpdateView' folder.id %}" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>
+        <form action="{% url 'folderDeleteView' folder.id %}" method="post" style="display:inline;" id="delete-form-{{ folder.id }}">
+          {% csrf_token %}
+          <button type="submit" style="border:none; background:none; padding:0;" data-bs-toggle="tooltip" title="Delete">
+            <i class="fas fa-trash"></i> <!-- Font Awesome icon for Delete -->
+          </button>
+        </form>
+        <script>
+          document.querySelector('#delete-form-{{ folder.id }}').addEventListener('submit', function (event) {
+            if (!confirm('Are you sure you want to delete this item "{{ folder.name }}"?')) {
+              event.preventDefault(); // Prevent form submission if the user cancels
+            }
+          });
+        </script>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Initialize Bootstrap Tooltips -->
+<script>
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+</script>
+
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect
-from .models import Sector,ScopeItem, Client, Staff,ContactPerson,ProjectLead, ProjectProposal, Project
-from .forms import SectorForm, ScopeItemForm, ClientForm, StaffForm, ContactPersonForm, ProjectLeadForm, ProjectProposalForm, ProjectForm
+from .models import Sector,ScopeGroup,ScopeItem, Client, Staff,ContactPerson,ProjectLead, ProjectProposal, Project
+from .forms import SectorForm,ScopeGroupForm, ScopeItemForm, ClientForm, StaffForm, ContactPersonForm, ProjectLeadForm, ProjectProposalForm, ProjectForm
 # Create your views here.
 
 def sectorList(request):
@@ -45,40 +45,102 @@ def sectorDeleteView(request, id):
         return HttpResponseRedirect("/project/sectorList")
     return render(request, "project/sectorDeleteView.html", context2)
 
-def scopeItemList(request):
-    scopeItems = ScopeItem.objects.all()  # Use plural for consistency
+def scopeGroupList(request):
+    scopeGroups = ScopeGroup.objects.all()  # Use plural for consistency
 
-    context = {"scopeItems": scopeItems}
+    context = {"scopeGroups": scopeGroups}
+    return render(request, "project/scopeGroupList.html", context)
+
+
+def scopeGroupCreateView(request):
+    form = ScopeGroupForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        return redirect("scopeGroupList")  # Use named URL pattern
+    return render(request, "project/scopeGroupCreateView.html", {"form": form})
+
+
+def scopeGroupUpdateView(request, id):
+    obj = get_object_or_404(ScopeGroup, id=id)
+    form = ScopeGroupForm(request.POST or None, request.FILES or None, instance=obj)
+
+    if form.is_valid():
+        form.save()
+        return redirect("scopeGroupList")  # Use named URL pattern
+
+    return render(request, "project/scopeGroupUpdateView.html", {"form": form})
+
+
+def scopeGroupDeleteView(request, id):
+    obj = get_object_or_404(ScopeGroup, id=id)
+
+    if request.method == "POST":
+        obj.delete()
+        return redirect("scopeGroupList")  # Use named URL pattern
+
+    return render(request, "project/scopeGroupDeleteView.html", {"scopeGroup": obj})
+
+def scopeItemList(request, id):
+    scopeGroup = get_object_or_404(ScopeGroup, id=id)
+    scopeItems = ScopeItem.objects.filter(scopeGroup=scopeGroup)
+    context = {
+        "scopeItems": scopeItems,
+        "scopeGroup": scopeGroup,  # Include the ScopeGroup object in the context
+        "id": id
+    }
     return render(request, "project/scopeItemList.html", context)
 
 
-def scopeItemCreateView(request):
-    form = ScopeItemForm(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        form.save()
-        return redirect("scopeItemList")  # Use named URL pattern
-    return render(request, "project/scopeItemCreateView.html", {"form": form})
+
+def scopeItemCreateView(request, id):
+    context = {}
+    scopeGroup = get_object_or_404(ScopeGroup, id=id)
+
+    if request.method == "POST":
+        form = ScopeItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            scopeItem = form.save(commit=False)
+            scopeItem.scopeGroup = scopeGroup
+            scopeItem.save()
+            return redirect("scopeItemList", id=id)  # Redirect after successful creation
+    else:
+        form = ScopeItemForm()  # Initialize empty form for GET request
+
+    # Populate the context with the form and other data
+    context["form"] = form
+    context["id"] = id
+    context["scopeGroup_name"] = scopeGroup.name
+    
+    return render(request, "project/scopeItemCreateView.html", context)
 
 
 def scopeItemUpdateView(request, id):
     obj = get_object_or_404(ScopeItem, id=id)
-    form = ScopeItemForm(request.POST or None, request.FILES or None, instance=obj)
+    scopeGroup = obj.scopeGroup
+    context1 = {"scopeGroup": scopeGroup}
+    if request.method == "POST":
+        form = ScopeItemForm(request.POST or None, request.FILES or None, instance=obj, parent_scopeGroup=scopeGroup)
+        if form.is_valid():
+            form.save()
+            return redirect("scopeItemList", id=scopeGroup.id)  # Use named URL pattern
+    else:
+        form = ScopeItemForm(instance=obj, parent_scopeGroup=scopeGroup)
 
-    if form.is_valid():
-        form.save()
-        return redirect("scopeItemList")  # Use named URL pattern
+    context1["form"] = form
+    return render(request, "project/scopeItemUpdateView.html", context1)
 
-    return render(request, "project/scopeItemUpdateView.html", {"form": form})
 
 
 def scopeItemDeleteView(request, id):
     obj = get_object_or_404(ScopeItem, id=id)
+    scopeGroup_id = obj.scopeGroup.id
 
     if request.method == "POST":
         obj.delete()
-        return redirect("scopeItemList")  # Use named URL pattern
+        return redirect("scopeItemList",id=scopeGroup_id)  # Use named URL pattern
 
-    return render(request, "project/scopeItemDeleteView.html", {"scopeItem": obj})
+    context = {"object":obj}
+    return render(request, "project/scopeItemDeleteView.html", context)
 
 
 def clientList(request):
@@ -125,46 +187,54 @@ def clientDeleteView(request, id):
 
 def staffList(request):
     staff = Staff.objects.all()
-
     context = {"staff": staff}
     return render(request, "project/staffList.html", context)
 
 def staffCreateView(request):
     context = {}
-
+    
+    # Check if the user already has a staff profile
+    if Staff.objects.filter(user=request.user).exists():
+        return redirect('staffUpdateView', id=request.user.staff_profile.id)
+    
     form = StaffForm(request.POST or None, request.FILES or None)
     if form.is_valid():
-        form.save()
+        staff_instance = form.save(commit=False)
+        staff_instance.user = request.user
+        staff_instance.save()
         return HttpResponseRedirect("/project/staffList")
+    
     context["form"] = form
     return render(request, "project/staffCreateView.html", context)
 
 def staffUpdateView(request, id):
-    context1 = {}
     obj = get_object_or_404(Staff, id=id)
+    
+    if obj.user != request.user:
+        return redirect('/project/staffList')  # Restrict updates to the owner only
+
     form = StaffForm(request.POST or None, request.FILES or None, instance=obj)
 
     if form.is_valid():
-        form.save()
+        staff_instance = form.save(commit=False)
+        staff_instance.user = request.user  # Keep the logged-in user associated
+        staff_instance.save()
         return redirect("/project/staffList")
 
-    context1["form"] = form
-
+    context1 = {"form": form}
     return render(request, "project/staffUpdateView.html", context1)
 
 def staffDeleteView(request, id):
-
-    context2 = {}
-
     obj = get_object_or_404(Staff, id=id)
+    
+    if obj.user != request.user:
+        return redirect('/project/staffList')  # Restrict deletion to the owner only
 
     if request.method == "POST":
-
         obj.delete()
-
         return HttpResponseRedirect("/project/staffList")
-    return render(request, "project/staffDeleteView.html", context2)
-
+    
+    return render(request, "project/staffDeleteView.html")
 def cpList(request):
     contactPersons = ContactPerson.objects.all()  # Use plural for consistency
 
@@ -201,139 +271,154 @@ def cpDeleteView(request, id):
     return render(request, "project/cpDeleteView.html", {"contactPerson": obj})
 
 
-def plList(request,id):
-    projectLead = ProjectLead.objects.filter(projectproposal = id)
-
-    context = {"projectLead": projectLead, "id":id}
+def plList(request):
+    projectLeads = ProjectLead.objects.all()
+    context = {"projectLeads": projectLeads}
     return render(request, "project/plList.html", context)
 
 def plCreateView(request):
-    context = {}
-
-    if request.method == "POST":
-        form = ProjectLeadForm(request.POST or None, request.FILES or None)
-        if form.is_valid():
-            pl= form.save()
-            pl.projectproposal.id = id
-            pl.save()
-            return redirect("/project/plList",id=id)
-    else:
-        form = ProjectLeadForm()
-    context["form"] = form
-    context["id"] = id
-    return render(request, "project/plCreateView.html", context)
+    form = ProjectLeadForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('plList')  # Redirect to a list or another page after creation
+    context = {'form': form}
+    return render(request, 'project/plCreateView.html', context)
 
 def plUpdateView(request, id):
     context1 = {}
-    obj = get_object_or_404(ProjectLead, id=id)
-    form = ProjectLeadForm(request.POST or None, request.FILES or None, instance=obj)
-
+    obj = get_object_or_404(ProjectLead,id=id)
+    form = ProjectLeadForm(request.POST or None, request.FILES or None, instance= obj)
     if form.is_valid():
         form.save()
-        return redirect("project/plList")
-
+        return redirect("/project/plList")
     context1["form"] = form
-
     return render(request, "project/plUpdateView.html", context1)
 
 def plDeleteView(request, id):
-
-    context2 = {}
-
     obj = get_object_or_404(ProjectLead, id=id)
-
     if request.method == "POST":
-
         obj.delete()
+        return redirect("plList")
+    return render(request, "project/plDeleteView.html")
 
-        return HttpResponseRedirect("/project/plList")
-    return render(request, "project/plDeleteView.html", context2)
 
-def ppList(request,id):
-    projectProposal = ProjectProposal.objects.filter(project = id)
+def ppList(request, id):
+    projectProposals = ProjectProposal.objects.filter(projectLead = id)
+    projectLead = get_object_or_404(ProjectLead, id=id)
+    context = {"projectProposals":projectProposals,"projectLead":projectLead,"id":id}
+    return render(request,"project/ppList.html", context)
 
-    context = {"projectProposal": projectProposal,"id":id}
-    return render(request, "project/ppList.html", context)
+def ppCreateView(request, id):
+    projectLead = get_object_or_404(ProjectLead, id=id)
+    form = ProjectProposalForm(request.POST or None, parent_projectLead=projectLead)
+    
+    if form.is_valid():
+        projectProposal = form.save(commit=False)
+        projectProposal.projectLead = projectLead
+        projectProposal.save()
+        return redirect("ppList", id=id)
+    
+    context = {
+        "form": form,
+        "id": id,
+        "projectLead": projectLead,
+    }
 
-def ppCreateView(request,id):
-    context = {}
-
-    if request.method == "POST":
-        form = ProjectProposalForm(request.POST or None, request.FILES or None)
-        if form.is_valid():
-            pp= form.save()
-            pp.project_id = id
-            pp.save()
-            return redirect("/project/ppList",id=id)
-    else:
-        form = ProjectProposalForm()
-    context["form"] = form
-    context["id"] = id
     return render(request, "project/ppCreateView.html", context)
 
-def ppUpdateView(request, id):
-    context1 = {}
-    obj = get_object_or_404(ProjectProposal, id=id)
-    form = ProjectProposalForm(request.POST or None, request.FILES or None, instance=obj)
 
+def ppUpdateView(request, id):
+    obj = get_object_or_404(ProjectProposal, id=id)
+    projectLead = obj.projectLead
+    form = ProjectProposalForm(request.POST or None, request.FILES or None, instance=obj, parent_projectLead=projectLead)
+    
     if form.is_valid():
         form.save()
-        return redirect("project/ppList")
+        return redirect("ppList", id=projectLead.id)
+    
+    context = {
+        "form": form,
+        "projectLead": projectLead,
+    }
+    return render(request, "project/ppUpdateView.html", context)
 
-    context1["form"] = form
 
-    return render(request, "project/ppUpdateView.html", context1)
+
 
 def ppDeleteView(request, id):
-
-    context2 = {}
-
     obj = get_object_or_404(ProjectProposal, id=id)
-
+    projectLead_id = obj.projectLead.id
     if request.method == "POST":
-
         obj.delete()
+        return redirect("ppList", id=projectLead_id)
+    context ={"object":obj}
+    return render(request, "project/ppDeleteView.html",context)
 
-        return HttpResponseRedirect("project/ppList")
-    return render(request, "project/ppDeleteView.html", context2)
 
-def projectList(request):
-    project = Project.objects.all()
-    context = {"project": project}
+
+def projectList(request, id):
+    projects = Project.objects.filter(projectProposal=id)
+    projectProposal = get_object_or_404(ProjectProposal, id=id)
+    context = {
+        "projects": projects,
+        "projectProposal": projectProposal,
+        "id": id
+    }
     return render(request, "project/projectList.html", context)
 
 
-def projectCreateView(request):
-    context = {}
-    form = ProjectForm(request.POST or None, request.FILES or None)
+def projectCreateView(request, id):
+    projectProposal = get_object_or_404(ProjectProposal, id=id)
+    form = ProjectForm(request.POST or None, parent_projectProposal=projectProposal)
+    
     if form.is_valid():
-        form.save()
-        return redirect("projectList")
-    context["form"] = form
+        project = form.save(commit=False)
+        project.projectProposal = projectProposal
+        project.save()
+        return redirect("projectList", id=id)
+    
+    context = {
+        "form": form,
+        "projectProposal": projectProposal,
+        "id": id
+    }
     return render(request, "project/projectCreateView.html", context)
+
+
 
 def projectUpdateView(request, id):
     obj = get_object_or_404(Project, id=id)
-    form = ProjectForm(request.POST or None, request.FILES or None, instance=obj)
+    projectProposal = obj.projectProposal
+    form = ProjectForm(request.POST or None, request.FILES or None, instance=obj, parent_projectProposal=projectProposal)
+    
     if form.is_valid():
         form.save()
-        return redirect("projectList")
-    context = {"form": form, "project": obj}
+        return redirect("projectList", id=projectProposal.id)
+
+    context = {
+        "form": form,
+        "project": obj,
+        "projectProposal": projectProposal,
+    }
     return render(request, "project/projectUpdateView.html", context)
 
 
+
 def projectDeleteView(request, id):
-
-    context2 = {}
-
     obj = get_object_or_404(Project, id=id)
-
+    
     if request.method == "POST":
-
         obj.delete()
+        return redirect("projectList", id=obj.projectProposal.id)
+    
+    context = {
+        "project": obj,
+        "id": obj.projectProposal.id
+    }
+    return render(request, "project/projectDeleteView.html", context)
 
-        return redirect("/project/projectList")
-    return render(request, "project/projectDeleteView.html", context2)
+
+
 
 
 

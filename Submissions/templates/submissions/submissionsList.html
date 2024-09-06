@@ -6,43 +6,47 @@
             {% csrf_token %}
             <div class="container mt-3"></div>
         </form>
-        <a href="{% url 'submissionsCreateView' %}"><button type="button" class="btn btn-primary btn-sm " style="float:right;">Add New</button></a>
-</div>
+        <a href="{% url 'submissionsCreateView' %}">
+            <button type="button" class="btn btn-primary btn-sm">
+                Add New
+            </button>
+        </a>
+    </div>
     <div style="overflow-x: auto; z-index: 1;">
-        <table class="table">
-            <tr class="m-5 p-8">
-                <td>Project Name</td>
-                <td>Revision Number</td>
-                <td>Why Revision</td>
-                <td>Checking Date</td>
-                <td>Printing Date</td>
-                <td>Submission Date</td>
-                <td>Actions</td>
-            </tr>
-            {% for sb in submissions %}
+        <table  class="table table-striped table-hover mt-3">
+            <thead>
                 <tr>
-                    <td>{{ sb.project.projectName }}</td>
-                    <td>{{ sb.revisionNo }}</td>
-                    <td>{{ sb.whyRevision }}</td>
-                    <td>{{ sb.checkingDate }}</td>
-                    <td>{{ sb.printingDate }}</td>
-                    <td>{{ sb.submissionDate }}</td>
-                    <td>
-                        <a href="{% url 'submissionsUpdateView' sb.id %}"><button type="button" class="btn btn-primary">Edit</button></a>
-                        <form action="{% url 'submissionsDeleteView' sb.id %}" method="post" style="display:inline;" id="delete-form-{{ sb.id }}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                        <script>
-                            document.querySelector('#delete-form-{{ sb.id }}').addEventListener('submit', function (event) {
-                              if (!confirm('Are you sure you want to delete this item "{{ sb.name }}"?')) {
-                                event.preventDefault() // Prevent form submission if the user cancels
-                              }
-                            })
-                          </script>
-                    </td>
+                    <th class="text-start">Project Name</th>
+                    <th class="text-start">Revision Number</th>
+                    <th class="text-start">Submission Date</th>
+                    <th class="text-end">Actions</th>
                 </tr>
-            {% endfor %}
+            </thead>
+            <tbody>
+                {% for sb in submissions %}
+                    <tr>
+                        <td class="text-start">{{ sb.project.projectName }}</td>
+                        <td class="text-start">{{ sb.revisionNo }}</td>
+                        <td class="text-start">{{ sb.submissionDate }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'submissionsUpdateView' sb.id %}" title="Edit Submission"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                            <form action="{% url 'submissionsDeleteView' sb.id %}" method="post" style="display:inline;" id="delete-form-{{ sb.id }}">
+                                {% csrf_token %}
+                                <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Submission">
+                                    <i class="fas fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                            <script>
+                                document.querySelector('#delete-form-{{ sb.id }}').addEventListener('submit', function (event) {
+                                    if (!confirm('Are you sure you want to delete this item "{{ sb.project.projectName }}"?')) {
+                                        event.preventDefault(); // Prevent form submission if the user cancels
+                                    }
+                                });
+                            </script>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 {% endblock %}

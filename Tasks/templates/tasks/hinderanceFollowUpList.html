@@ -2,39 +2,57 @@
 {% block content %}
     <h2>Hinderance Follow Up List for {{ hinderance.dciItem }}</h2>
     
-    <a href="{% url 'hinderanceFollowUpCreateView' id %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button>
-    </a>
+    <div>
+        <!-- Back Button -->
+        <a href="{% url 'hinderancesList' %}" style="text-decoration: none;">
+            <button type="button" class="btn btn-secondary btn-sm" style="float:left;">
+                Back
+            </button>
+        </a>
+        
+        <!-- Add New Button -->
+        <a href="{% url 'hinderanceFollowUpCreateView' id %}">
+            <button type="button" class="btn btn-primary btn-sm" style="float:right;">
+                Add New
+            </button>
+        </a>
+    </div>
 
-    <table class="table">
-        <tr>
-            <td>Follow Up Date</td>
-            <td>Follow Up Description</td>
-            <td>Document</td>
-            <td>Actions</td>
-        </tr>
-        {% for hf in hinderanceFollowUp %}
+    <table class="table table-striped table-hover mt-5">
+        <thead>
             <tr>
-                <td>{{ hf.followUpDate }}</td>
-                <td>{{ hf.followUpDescription }}</td>
-                <td>
-                    <a href="{% url 'documentDownloadView' hf.id %}"><button type="button" class="btn btn-primary">Download</button></a>
-                </td>
-                <td>
-                    <a href="{% url 'hinderanceFollowUpUpdateView' hf.id %}"> <button type="button" class="btn btn-primary">Edit</button></a>
-                    <form action="{% url 'hinderanceFollowUpDeleteView' hf.id %}" method="post" style="display:inline;" id="delete-form-{{ hf.id }}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                    <script>
-                        document.querySelector('#delete-form-{{ hf.id }}').addEventListener('submit', function (event) {
-                          if (!confirm('Are you sure you want to delete this item "{{ hf.name }}"?')) {
-                            event.preventDefault() // Prevent form submission if the user cancels
-                          }
-                        })
-                      </script>
-                </td>
+                <th class="text-start">Follow Up Date</th>
+                <th class="text-end">Document</th>
+                <th class="text-end">Actions</th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+            {% for hf in hinderanceFollowUp %}
+                <tr>
+                    <td class="text-start">{{ hf.followUpDate }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'documentDownloadView' hf.id %}" title="Download Document">
+                            <i class="fas fa-download" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'hinderanceFollowUpUpdateView' hf.id %}" title="Edit Follow Up"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                        <form action="{% url 'hinderanceFollowUpDeleteView' hf.id %}" method="post" style="display:inline;" id="delete-form-{{ hf.id }}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Follow Up">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                        <script>
+                            document.querySelector('#delete-form-{{ hf.id }}').addEventListener('submit', function (event) {
+                                if (!confirm('Are you sure you want to delete this item "{{ hf.followUpDescription }}"?')) {
+                                    event.preventDefault(); // Prevent form submission if the user cancels
+                                }
+                            });
+                        </script>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

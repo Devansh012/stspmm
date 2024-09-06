@@ -1,0 +1,50 @@
+{% extends "registration/base.html" %}
+{% block content %}
+    <h2>Scope Group List</h2>
+    <form method="POST" action="{% url 'scopeGroupList' %}">
+        {% csrf_token %}
+        <div class="container mt-0"></div>
+    </form>
+    
+    <a href="{% url 'scopeGroupCreateView' %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
+          Add New
+        </button>
+    </a>
+
+    <table class="table table-striped table-hover mt-5">
+        <thead>
+            <tr>
+                <th class="text-start">Name</th>
+                <th class="text-end">Scope Items</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sg in scopeGroups %}
+                <tr>
+                    <td class="text-start">{{ sg.name }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'scopeItemList' sg.id %}" title="View Scope ItemList"><i class="fas fa-users"></i></a>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'scopeGroupUpdateView' sg.id %}" title="Edit Scope Group"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                        <form action="{% url 'scopeGroupDeleteView' sg.id %}" method="post" style="display:inline;" id="delete-form-{{ sg.id }}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Scope Group">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                        <script>
+                            document.querySelector('#delete-form-{{ sg.id }}').addEventListener('submit', function (event) {
+                                if (!confirm('Are you sure you want to delete this item "{{ sg.name }}"?')) {
+                                    event.preventDefault(); // Prevent form submission if the user cancels
+                                }
+                            });
+                        </script>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

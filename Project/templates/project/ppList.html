@@ -1,46 +1,60 @@
 {% extends "registration/base.html" %}
-{% block content%}
-    <h2>Project Proposal List</h2>
+{% block content %}
+    <h2>Project Proposal List for {{projectLead.projectName}}</h2>
 
-    
-   <a href="{% url 'ppCreateView' id %}">
-   <button type="button" class="btn btn-primary btn-sm " style="float:right;" >Add New</button>
-   </a>
+    <a href="{% url 'plList' %}" style="text-decoration: none;">
+        <button type="button" class="btn btn-secondary btn-sm">
+          <span style="font-size: 1.2em;">&#8592; Back</span>
+        </button>
+      </a>
+    <a href="{% url 'ppCreateView' id %}">
+        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
+           Add New
+        </button>
+    </a>
 
-    <table class = "table">
-      <tr class="m-5 p-8">
-        <td>Submission Date</td>
-        <td>Proposal Cost</td>
-        <td>Accepted</td>
-        <td>Acceptance Date</td>
-        <td>Work Order Number</td>
-        {% comment %} <td>Work Order Date</td>
-        <td>Work Order Cost</td> {% endcomment %}
-        <td>Project Lead</td>
-        <td>Actions</td>
-     </tr>
-      {% for pp in projectProposal %}
-        <tr>
-          <td>{{pp.submissionDate }}</td>         
-          <td>{{pp.proposalCost}}</td> 
-          <td>{{pp.accepted}}</td>
-          <td>{{pp.acceptanceDate}}</td>
-          <td>{{pp.workOrderNo}}</td>
-          {% comment %} <td>{{pp.workOrderDate}}</td>
-          <td>{{pp.workOrderCost}}</td> {% endcomment %}
-          <td><a href="{% url 'plList' pp.id %}"><button type="button" class="btn btn-primary">Project Lead</button></a></td>
-
-
-          <td>
-            <a href="{% url 'ppUpdateView' pp.id %}">   <button type="button" class="btn btn-primary">Edit</button>
-            </a>
-            <form action="{% url 'ppDeleteView' pp.id %}" method="post" style="display:inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-          </td>
-       
-        </tr>
-      {% endfor %}
+    <!-- Table displaying Project Proposals -->
+    <table class="table table-striped table-hover mt-5">
+        <thead>
+            <tr class="m-5 p-8">
+                <th class="text-start">Submission Date</th>
+                <th class="text-start">Proposal Cost</th>
+                <th class="text-start">Accepted</th>
+                <th class="text-start">Acceptance Date</th>
+                <th class="text-start">Work Order Number</th>
+                <th class="text-end">Project </th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pp in projectProposals %}
+                <tr>
+                    <td class="text-start">{{ pp.submissionDate }}</td>
+                    <td class="text-start">{{ pp.proposalCost }}</td>
+                    <td class="text-start">{{ pp.accepted }}</td>
+                    <td class="text-start">{{ pp.acceptanceDate }}</td>
+                    <td class="text-start">{{ pp.workOrderNo }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'projectList' pp.id %}" title="View ProjectList"><i class="fas fa-users"></i></a>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'ppUpdateView' pp.id %}" title="Edit ProjectProposal"><i class="fas fa-edit"></i></a>
+                        <form action="{% url 'ppDeleteView' pp.id %}" method="post" style="display:inline;" id="delete-form-{{ pp.id }}">
+                            {% csrf_token %}
+                            <button type="submit" style="border:none; background:none; padding:0;" data-bs-toggle="tooltip" title="Delete ProjectProposal">
+                                <i class="fas fa-trash"></i> <!-- Font Awesome icon for Delete -->
+                              </button>
+                        </form>
+                        <script>
+                            document.querySelector('#delete-form-{{ pp.id }}').addEventListener('submit', function (event) {
+                              if (!confirm('Are you sure you want to delete this item "{{ pp.name }}"?')) {
+                                event.preventDefault(); // Prevent form submission if the user cancels
+                              }
+                            });
+                          </script>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
-  {% endblock %}
+{% endblock %}
