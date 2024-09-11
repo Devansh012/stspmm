@@ -11,13 +11,20 @@
         <div class="row">
             {% for cp in contactPersons %}
                 <div class="col-md-4 mb-4">
-                    <div class="card position-relative">
+                    <!-- Bootstrap shadow class -->
+                    <div class="card shadow-lg position-relative">
+                        
+                        <!-- Shadow person image taking less pixel space but shown fully -->
+                        <img src="/media/simg.jpg"
+                             class="card-img-top img-fluid" 
+                             alt="Person's Shadow" style="object-fit: contain; max-height: 150px; width: 100%;">
+                        
                         <div class="card-body">
                             <div class="position-absolute" style="top: 10px; right: 10px;">
                                 <a href="{% url 'cpUpdateView' cp.id %}" class="text-primary me-2" title="Edit Contact Person"><i class="fas fa-edit"></i></a>
                                 <form action="{% url 'cpDeleteView' cp.id %}" method="post" style="display:inline;" id="delete-form-{{ cp.id }}">
                                     {% csrf_token %}
-                                    <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Contact Person" >
+                                    <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Contact Person">
                                         <i class="fas fa-trash" aria-hidden="true"></i>
                                     </button>
                                 </form>
@@ -41,7 +48,8 @@
     <script>
         document.querySelectorAll('form[id^="delete-form-"]').forEach(function(form) {
             form.addEventListener('submit', function (event) {
-                if (!confirm('Are you sure you want to delete this item "{{ cp.name }}"?')) {
+                const name = form.closest('.card').querySelector('.card-title').innerText;
+                if (!confirm(`Are you sure you want to delete this item "${name}"?`)) {
                     event.preventDefault(); // Prevent form submission if the user cancels
                 }
             });

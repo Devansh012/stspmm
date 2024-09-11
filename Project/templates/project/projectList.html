@@ -1,15 +1,8 @@
 {% extends "registration/base.html" %}
 {% block content %}
-    <h2>Project List for {{projectProposal}}</h2>
-
-    <a href="{% url 'ppList' id %}" style="text-decoration: none;">
-        <button type="button" class="btn btn-secondary btn-sm">
-          <span style="font-size: 1.2em;">&#8592; Back</span>
-        </button>
-      </a>
-
+    <h2>Project List</h2>
     <!-- Button to create a new Project -->
-    <a href="{% url 'projectCreateView' id %}">
+    <a href="{% url 'projectCreateView' %}">
         <button type="button" class="btn btn-primary btn-sm" style="float:right;">
             Add New
         </button>
@@ -25,8 +18,9 @@
                 {% comment %} <th>Description</th> {% endcomment %}
                 <th class="text-start">Date Of Commencement</th>
                 <th class="text-start">Last Date Of Delivery</th>
-                <th>Sector</th>
+                <th class="text-start">Sector</th>
                 {% comment %} <th>Scope Items</th> {% endcomment %}
+                <th class="text-end">Tasks</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
@@ -41,6 +35,9 @@
                     <td class="text-start">{{ pj.lastDateOfDelivery }}</td>
                     <td class="text-start">{{ pj.sector }}</td>
                     {% comment %} <td>{{ pj.scopeItems }}</td> {% endcomment %}
+                    <td class="text-end">
+                        <a href="{% url 'tasksList' pj.id %}" title="View Task"><i class="fas fa-tasks" aria-hidden="true"></i></a>
+                    </td>
                     <td class="text-end">
                         <a href="{% url 'projectUpdateView' pj.id %}" title="Edit Project"><i class="fas fa-edit"></i></a>
                         <form action="{% url 'projectDeleteView' pj.id %}" title="Delete Project" method="post" style="display:inline;" id="delete-form-{{ pj.id }}">

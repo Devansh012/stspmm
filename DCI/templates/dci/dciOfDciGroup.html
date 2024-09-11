@@ -19,7 +19,7 @@
 
 <table class="table table-striped table-hover mt-3">
   <thead>
-    <tr class="text-center">
+    <tr class="m-5 p-8 text-center">
       <th class="text-start">Name</th>
       <th class="text-start">Group Code</th>
       <th class="text-end">DCI Item</th>
@@ -28,11 +28,11 @@
   </thead>
   <tbody>
     {% for dg in dciGroup %}
-      <tr>
-        <td class="text-start">{{ dg.name }}</td>
-        <td class="text-start">{{ dg.groupCode }}</td>
-        <td class="text-end">
-          <a href="{% url 'dciItemList' dg.id %}" data-bs-toggle="tooltip" title="View DCI Items">
+      <tr class="text-center">
+        <td class="text-start align-middle">{{ dg.name }}</td>
+        <td class="text-start align-middle">{{ dg.groupCode }}</td>
+        <td class="text-end align-middle">
+          <a href="{% url 'dciItemList' dg.id %}" class="mx-5"data-bs-toggle="tooltip" title="View DCI Items">
             <i class="fas fa-box"></i> <!-- Font Awesome icon for DCI Item -->
           </a>
         </td>

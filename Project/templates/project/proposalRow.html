@@ -1,0 +1,21 @@
+<!-- proposalRow.html -->
+<tr id="proposal-{{ pp.id }}">
+    <td class="text-start">{{ pp.submissionDate }}</td>
+    <td class="text-start">{{ pp.proposalCost }}</td>
+    <td class="text-start">{{ pp.accepted }}</td>
+    <td class="text-start">{{ pp.docControlIndex }}</td>
+    <td class="text-start">{{ pp.acceptedDate }}</td>
+    <td class="text-start">{{ pp.workOrderNo }}</td>
+    <td class="text-end">
+        <!-- If approved, hide the approve button -->
+        {% if not pp.accepted %}
+            <button type="button" class="btn btn-primary btn-sm" 
+                hx-get="{% url 'approveProposal' pp.id %}"
+                hx-target="#proposal-{{ pp.id }}" 
+                hx-swap="outerHTML"
+                data-bs-toggle="modal" data-bs-target="#approveModal-{{ pp.id }}">
+                Approve
+            </button>
+        {% endif %}
+    </td>
+</tr>

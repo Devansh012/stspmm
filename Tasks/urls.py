@@ -2,8 +2,8 @@ from django.urls import path
 from .import views
 
 urlpatterns = [
-    path('tasksList/', views.tasksList, name="tasksList"),
-    path('tasksCreateView/', views.tasksCreateView, name="tasksCreateView"),
+    path('tasksList/<int:id>/', views.tasksList, name="tasksList"),
+    path('tasksCreateView/<int:id>/', views.tasksCreateView, name="tasksCreateView"),
     path('tasksUpdateView/<int:id>/', views.tasksUpdateView, name="tasksUpdateView"),
     path('tasksDeleteView/<int:id>/', views.tasksDeleteView, name="tasksDeleteView"),
 

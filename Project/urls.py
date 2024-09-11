@@ -43,10 +43,9 @@ urlpatterns = [
     path('ppUpdateView/<id>', views.ppUpdateView, name="ppUpdateView"),
     path('ppDeleteView/<id>',views.ppDeleteView,name ="ppDeleteView"),
 
-    path('projectList/<int:id>/', views.projectList, name='projectList'),
-    path('projectCreateView/<int:id>/', views.projectCreateView, name='projectCreateView'),
+    path('projectList/', views.projectList, name='projectList'),
+    path('projectCreateView/', views.projectCreateView, name='projectCreateView'),
     path('projectUpdateView/<id>', views.projectUpdateView, name='projectUpdateView'),
     path('projectDeleteView/<id>', views.projectDeleteView, name='projectDeleteView'),
-    
-]
+    path('approveProposal/<int:id>/', views.approveProposal, name='approveProposal'),]
 

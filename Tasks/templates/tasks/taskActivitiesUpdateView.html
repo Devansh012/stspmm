@@ -1,7 +1,7 @@
 {% extends "registration/base.html" %}
 {% block content %}
 <div class='main' class="form-group">
-    <h2>{{task.taskName}}Update Task Activities</h2>
+    <h2>Update Task Activities for {{task.taskName}}</h2>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}

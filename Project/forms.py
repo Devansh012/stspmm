@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import Sector,ScopeGroup, ScopeItem, Client, Staff, ContactPerson, ProjectLead, ProjectProposal, Project
+from .models import Sector,ScopeGroup, ScopeItem, Client, Staff, ContactPerson, ProjectLead, ProjectProposal, Project,  DCI
 
 class ContactPersonForm(forms.ModelForm):
     class Meta:
@@ -36,24 +36,39 @@ class StaffForm(forms.ModelForm):
         model = Staff
         fields = ['fathersName', 'dateOfBirth', 'addressPresent', 'addressHome', 'email', 'mobile1', 'mobile2']
 
+        widgets = {
+            'dateOfBirth': forms.DateInput(attrs={'type': 'date'}),
+        }
+
 
 class ProjectLeadForm(forms.ModelForm):
     class Meta:
         model = ProjectLead
-        fields = ['projectName', 'cost', 'agency', 'description', 'source', 'sourceDescription']
+        fields = ['projectName', 'cost', 'agency','scopeItem', 'description', 'source', 'sourceDescription']
 
 class ProjectProposalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         parent_projectLead = kwargs.pop('parent_projectLead', None)
         super(ProjectProposalForm, self).__init__(*args, **kwargs)
+
         if parent_projectLead:
             self.fields['projectLead'].initial = parent_projectLead
             self.fields['projectLead'].widget.attrs['readonly'] = True
             self.fields['projectLead'].widget.attrs['disabled'] = 'disabled'
 
+        # Filter out DCIs that are already attached to project proposals
+        used_dcis = ProjectProposal.objects.values_list('docControlIndex', flat=True)
+        self.fields['docControlIndex'].queryset = DCI.objects.exclude(id__in=used_dcis)
+
     class Meta:
         model = ProjectProposal
         fields = '__all__'
+
+        widgets = {    
+            'workOrderDate': forms.DateInput(attrs={'type': 'date'}),  # HTML5 date picker
+            'acceptedDate': forms.DateInput(attrs={'type': 'date'}),  # HTML5 date picker
+            'submissionDate': forms.DateInput(attrs={'type': 'date'})  # HTML5 date picker
+        }
 
 
 class ProjectForm(forms.ModelForm):
@@ -68,4 +83,10 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = '__all__'
+
+        widgets = {
+            'dateOfCommencement': forms.DateInput(attrs={'type': 'date'}),
+            'lastDateOfDelivery': forms.DateInput(attrs={'type': 'date'}),
+            'workOrderDate': forms.DateInput(attrs={'type': 'date'})  # HTML5 date picker
+        }
 

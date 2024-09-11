@@ -1,16 +1,10 @@
 {% extends "registration/base.html" %}
 {% block content %}
     <h2>Sector List</h2>
-    <form method="POST" action="{% url 'sectorList' %}">
-        {% csrf_token %}
-        <div class="container mt-0"></div>
-    </form>
 
-    <a href="{% url 'sectorCreateView' %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
-             Add New
-        </button>
-    </a>
+    <button type="button" class="btn btn-primary btn-sm" style="float:right;" hx-get="{% url 'sectorCreateView' %}" hx-target="#modal-body" hx-trigger="click" hx-swap="innerHTML">
+        Add New
+    </button>
 
     <table class="table table-striped table-hover mt-5">
         <thead>
@@ -21,25 +15,7 @@
         </thead>
         <tbody>
             {% for sc in sector %}
-                <tr>
-                    <td class="text-start">{{ sc.sectorName }}</td>
-                    <td class="text-end">
-                        <a href="{% url 'sectorUpdateView' sc.id %}" title="Edit Sector"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                        <form action="{% url 'sectorDeleteView' sc.id %}" method="post" style="display:inline;" id="delete-form-{{ sc.id }}">
-                            {% csrf_token %}
-                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Sector">
-                                <i class="fas fa-trash" aria-hidden="true"></i>
-                            </button>
-                        </form>
-                        <script>
-                            document.querySelector('#delete-form-{{ sc.id }}').addEventListener('submit', function (event) {
-                                if (!confirm('Are you sure you want to delete this item "{{ sc.sectorName }}"?')) {
-                                    event.preventDefault(); // Prevent form submission if the user cancels
-                                }
-                            });
-                        </script>
-                    </td>
-                </tr>
+                {% include 'project/sectorRow.html' with sc=sc %}
             {% endfor %}
         </tbody>
     </table>

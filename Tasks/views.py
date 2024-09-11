@@ -1,7 +1,5 @@
-import logging
-
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect
-from .models import Tasks, TaskActivities, Hinderances, HinderanceFollowUp
+from .models import Tasks, TaskActivities, Hinderances, HinderanceFollowUp, Project
 from .forms import (
     TasksForm,
     TaskActivitiesForm,
@@ -12,35 +10,47 @@ from .forms import (
 from django.http import FileResponse
 
 
-def tasksList(request):
-    tasks = Tasks.objects.all()
+def tasksList(request,id):
+    tasks = Tasks.objects.filter(project = id)
+    project = get_object_or_404(Project, id=id)
+    context = {"tasks":tasks,"project":project,"id":id}
+    return render(request,"tasks/tasksList.html", context)
 
-    context = {"tasks": tasks}
-    return render(request, "tasks/tasksList.html", context)
 
-
-def tasksCreateView(request):
-    context = {}
-
-    form = TasksForm(request.POST or None, request.FILES or None)
+def tasksCreateView(request, id):
+    project = get_object_or_404(Project, id=id)
+    form = TasksForm(request.POST or None, project=project)
+    
     if form.is_valid():
-        form.save()
-        return HttpResponseRedirect("/tasks/tasksList")
-    context["form"] = form
+        tasks = form.save(commit=False)
+        tasks.project = project  # Ensure project is set
+        tasks.save()
+        return redirect("tasksList", id=id)
+    
+    context = {
+        "form": form,
+        "id": id,
+        "project": project,
+    }
+
     return render(request, "tasks/tasksCreateView.html", context)
 
-def tasksUpdateView(request, id):
-    context1 = {}
-    obj = get_object_or_404(Tasks, id=id)
-    form = TasksForm(request.POST or None, request.FILES or None, instance=obj)
 
+def tasksUpdateView(request, id):
+    obj = get_object_or_404(Tasks, id=id)
+    project = obj.project
+    form = TasksForm(request.POST or None, request.FILES or None, instance=obj, project=project)
+    
     if form.is_valid():
         form.save()
-        return redirect("/tasks/tasksList")
+        return redirect("tasksList", id=project.id)
+    
+    context = {
+        "form": form,
+        "project": project,
+    }
+    return render(request, "tasks/tasksUpdateView.html", context)
 
-    context1["form"] = form
-
-    return render(request, "tasks/tasksUpdateView.html", context1)
 
 def tasksDeleteView(request, id):
 
@@ -59,20 +69,27 @@ def tasksDeleteView(request, id):
 def taskActivitiesList(request, id):
     task = get_object_or_404(Tasks, id=id)
     taskActivities = TaskActivities.objects.filter(task_id=id)
-    context = {"taskactivities": taskActivities, "task": task}
+    project = task.project  # Retrieve the project from the task
+    context = {
+        "taskactivities": taskActivities,
+        "task": task,
+        "project": project,  # Add the project to the context
+        "id": id,
+    }
     return render(request, 'tasks/taskActivitiesList.html', context)
+
 
 def taskActivitiesCreateView(request, id):
     task = get_object_or_404(Tasks, id=id)
     if request.method == "POST":
-        form = TaskActivitiesForm(request.POST or None, request.FILES or None)
+        form = TaskActivitiesForm(request.POST or None, request.FILES or None, user=request.user)
         if form.is_valid():
             task_activities = form.save(commit=False)
             task_activities.task = task
             task_activities.save()
             return redirect("taskActivitiesList", id=id)
     else:
-        form = TaskActivitiesForm()
+        form = TaskActivitiesForm(user=request.user)
     context = {"form": form, "task": task}
     return render(request, "tasks/taskActivitiesCreateView.html", context)
 
@@ -80,12 +97,12 @@ def taskActivitiesUpdateView(request, id):
     task_activity = get_object_or_404(TaskActivities, id=id)
     task = task_activity.task
     if request.method == "POST":
-        form = TaskActivitiesForm(request.POST or None, request.FILES or None, instance=task_activity)
+        form = TaskActivitiesForm(request.POST or None, request.FILES or None, instance=task_activity, user=request.user)
         if form.is_valid():
             form.save()
             return redirect("taskActivitiesList", id=task.id)
     else:
-        form = TaskActivitiesForm(instance=task_activity)
+        form = TaskActivitiesForm(instance=task_activity, user=request.user)
     context = {"form": form, "task": task}
     return render(request, "tasks/taskActivitiesUpdateView.html", context)
 

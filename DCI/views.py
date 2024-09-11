@@ -12,7 +12,7 @@ from .forms import (
 
 
 def dciList(request):
-    dci = DCI.objects.select_related('project').all()
+    dci = DCI.objects.all()
     context = {"dci": dci}
     return render(request, "dci/dciList.html", context)
 
@@ -65,12 +65,12 @@ def copyDci(request, id):
 
     new_dci = DCI.objects.create(
         name=f"Copy of {dci.name}",  
-        project=dci.project,          
+        # project=dci.project,          
     )
 
     for group in dci_groups:
         new_group = DCIGroup.objects.create(
-            name=f"Copy of {group.name}",    
+            name=group.name,    
             groupCode=group.groupCode,       
             dci=new_dci                      
         )
@@ -78,7 +78,7 @@ def copyDci(request, id):
    
         for item in dci_items.filter(dciGroup=group):
             DCIItem.objects.create(
-                name=f"Copy of {item.name}",  
+                name=item.name,  
                 sNo=item.sNo,                 
                 dciGroup=new_group,      
                 itemCode=item.itemCode,

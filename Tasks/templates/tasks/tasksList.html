@@ -1,13 +1,19 @@
 {% extends "registration/base.html" %}
 {% block content %}
-    <h2>Tasks List</h2>
+    <h2>Tasks List for {{project}}</h2>
 
-    <a href="{% url 'tasksCreateView' %}">
+    <a href="{% url 'projectList' %}" style="text-decoration: none;">
+        <button type="button" class="btn btn-secondary btn-sm">
+          <span style="font-size: 1.2em;">&#8592; Back</span>
+        </button>
+      </a>
+
+    <a href="{% url 'tasksCreateView' id %}">
         <button type="button" class="btn btn-primary btn-sm" style="float:right;"> Add New
         </button>
     </a>
 
-    <table  class="table table-striped table-hover mt-5">
+    <table  class="table table-striped table-hover mt-4">
         <thead>
             <tr>
                 <th class="text-start">Task Name</th>

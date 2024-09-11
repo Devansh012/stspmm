@@ -31,9 +31,13 @@
             <td class="text-start">{{ doc.createdDate }}</td>
             <td class="text-start">{{ doc.createdBy }}</td>
             <td class="text-end">
-                <a href="{% url 'documentsDownloadsView' doc.id %}" data-bs-toggle="tooltip" title="Download">
-                    <i class="fas fa-download"></i> <!-- Font Awesome icon for Download -->
-                </a>
+                {% if doc.file %}
+                    <a href="{% url 'documentsDownloadsView' doc.id %}" data-bs-toggle="tooltip" title="Download">
+                        <i class="fas fa-download"></i> <!-- Font Awesome icon for Download -->
+                    </a>
+                {% else %}
+                    <span>No File</span>
+                {% endif %}
             </td>
             <td class="text-end">
                 <a href="{% url 'documentUpdateView' doc.id %}" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>

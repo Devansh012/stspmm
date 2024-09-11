@@ -10,19 +10,26 @@
     <div class="container mt-5">
         <div class="row">
             {% for sf in staff %}
-                <div class="col-md-4 mb-4">
-                    <div class="card position-relative">
-                        <div class="card-body">
-                            <div class="position-absolute" style="top: 10px; right: 10px;">
-                                <a href="{% url 'staffUpdateView' sf.id %}" class="text-primary me-2" title="Edit Staff"><i class="fas fa-edit"></i></a>
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm position-relative" style="font-size: 0.9rem; padding: 5px;">
+                        <!-- Shadow person image taking less pixel space but shown fully -->
+                        <img src="/media/simg.jpg"
+                             class="card-img-top img-fluid" 
+                             alt="Person's Shadow" style="object-fit: contain; max-height: 150px; width: 100%;">
+
+                        <div class="card-body" style="padding: 8px;">
+                            <div class="position-absolute" style="top: 5px; right: 5px;">
+                                <a href="{% url 'staffUpdateView' sf.id %}" class="text-primary me-2" title="Edit Staff" style="font-size: 1rem;">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                                 <form action="{% url 'staffDeleteView' sf.id %}" method="post" style="display:inline;" id="delete-form-{{ sf.id }}">
                                     {% csrf_token %}
-                                    <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Staff" >
+                                    <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Staff">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                             </div>
-                            <h5 class="card-title">{{ sf.user }}</h5>
+                            <h6 class="card-title">{{ sf.user }}</h6>
                             <p class="card-text"><strong>Father's Name:</strong> {{ sf.fathersName }}</p>
                             <p class="card-text"><strong>Date of Birth:</strong> {{ sf.dateOfBirth }}</p>
                             <p class="card-text"><strong>Email:</strong> {{ sf.email }}</p>

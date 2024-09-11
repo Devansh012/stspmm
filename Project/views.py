@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect
+from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect,HttpResponse
+from django.http import JsonResponse
 from .models import Sector,ScopeGroup,ScopeItem, Client, Staff,ContactPerson,ProjectLead, ProjectProposal, Project
 from .forms import SectorForm,ScopeGroupForm, ScopeItemForm, ClientForm, StaffForm, ContactPersonForm, ProjectLeadForm, ProjectProposalForm, ProjectForm
 # Create your views here.
@@ -10,40 +11,34 @@ def sectorList(request):
     return render(request, "project/sectorList.html", context)
 
 def sectorCreateView(request):
-    context = {}
-
     form = SectorForm(request.POST or None, request.FILES or None)
     if form.is_valid():
-        form.save()
-        return HttpResponseRedirect("/project/sectorList")
-    context["form"] = form
-    return render(request, "project/sectorCreateView.html", context)
+        sector = form.save()
+        if request.headers.get('HX-Request'):
+            return render(request, 'project/sectorRow.html', {'sc': sector})
+        return redirect('/project/sectorList')
+    return render(request, "project/sectorCreateView.html", {'form': form})
 
+# Update View
 def sectorUpdateView(request, id):
-    context1 = {}
     obj = get_object_or_404(Sector, id=id)
     form = SectorForm(request.POST or None, request.FILES or None, instance=obj)
-
     if form.is_valid():
-        form.save()
-        return redirect("/project/sectorList")
+        sector = form.save()
+        if request.headers.get('HX-Request'):
+            return render(request, 'project/sectorRow.html', {'sc': sector})
+        return redirect('/project/sectorList')
+    return render(request, "project/sectorUpdateView.html", {'form': form, 'sc': obj})
 
-    context1["form"] = form
-
-    return render(request, "project/sectorUpdateView.html", context1)
-
+# Delete View
 def sectorDeleteView(request, id):
-
-    context2 = {}
-
     obj = get_object_or_404(Sector, id=id)
-
     if request.method == "POST":
-
         obj.delete()
-
-        return HttpResponseRedirect("/project/sectorList")
-    return render(request, "project/sectorDeleteView.html", context2)
+        if request.headers.get('HX-Request'):
+            return HttpResponse('')
+        return redirect('/project/sectorList')
+    return render(request, "project/sectorDeleteView.html", {'sc': obj})
 
 def scopeGroupList(request):
     scopeGroups = ScopeGroup.objects.all()  # Use plural for consistency
@@ -280,19 +275,18 @@ def plCreateView(request):
     form = ProjectLeadForm(request.POST or None)
     if form.is_valid():
         form.save()
-        return redirect('plList')  # Redirect to a list or another page after creation
+        return redirect('plList')
     context = {'form': form}
     return render(request, 'project/plCreateView.html', context)
 
 def plUpdateView(request, id):
-    context1 = {}
-    obj = get_object_or_404(ProjectLead,id=id)
-    form = ProjectLeadForm(request.POST or None, request.FILES or None, instance= obj)
+    obj = get_object_or_404(ProjectLead, id=id)
+    form = ProjectLeadForm(request.POST or None, request.FILES or None, instance=obj)
     if form.is_valid():
         form.save()
         return redirect("/project/plList")
-    context1["form"] = form
-    return render(request, "project/plUpdateView.html", context1)
+    context = {"form": form}
+    return render(request, "project/plUpdateView.html", context)
 
 def plDeleteView(request, id):
     obj = get_object_or_404(ProjectLead, id=id)
@@ -301,12 +295,17 @@ def plDeleteView(request, id):
         return redirect("plList")
     return render(request, "project/plDeleteView.html")
 
-
 def ppList(request, id):
-    projectProposals = ProjectProposal.objects.filter(projectLead = id)
+    projectProposals = ProjectProposal.objects.filter(projectLead=id)
     projectLead = get_object_or_404(ProjectLead, id=id)
-    context = {"projectProposals":projectProposals,"projectLead":projectLead,"id":id}
-    return render(request,"project/ppList.html", context)
+    any_approved = projectProposals.filter(accepted=True).exists()
+    context = {
+        "projectProposals": projectProposals,
+        "projectLead": projectLead,
+        "id": id,
+        "any_approved": any_approved
+    }
+    return render(request, "project/ppList.html", context)
 
 def ppCreateView(request, id):
     projectLead = get_object_or_404(ProjectLead, id=id)
@@ -326,7 +325,6 @@ def ppCreateView(request, id):
 
     return render(request, "project/ppCreateView.html", context)
 
-
 def ppUpdateView(request, id):
     obj = get_object_or_404(ProjectProposal, id=id)
     projectLead = obj.projectLead
@@ -342,80 +340,89 @@ def ppUpdateView(request, id):
     }
     return render(request, "project/ppUpdateView.html", context)
 
-
-
-
 def ppDeleteView(request, id):
     obj = get_object_or_404(ProjectProposal, id=id)
     projectLead_id = obj.projectLead.id
     if request.method == "POST":
         obj.delete()
         return redirect("ppList", id=projectLead_id)
-    context ={"object":obj}
-    return render(request, "project/ppDeleteView.html",context)
+    context = {"object": obj}
+    return render(request, "project/ppDeleteView.html", context)
 
-
-
-def projectList(request, id):
-    projects = Project.objects.filter(projectProposal=id)
-    projectProposal = get_object_or_404(ProjectProposal, id=id)
-    context = {
-        "projects": projects,
-        "projectProposal": projectProposal,
-        "id": id
-    }
+def projectList(request):
+    projects = Project.objects.all()
+    context = {"projects": projects}
     return render(request, "project/projectList.html", context)
 
-
-def projectCreateView(request, id):
-    projectProposal = get_object_or_404(ProjectProposal, id=id)
-    form = ProjectForm(request.POST or None, parent_projectProposal=projectProposal)
-    
-    if form.is_valid():
-        project = form.save(commit=False)
-        project.projectProposal = projectProposal
-        project.save()
-        return redirect("projectList", id=id)
-    
-    context = {
-        "form": form,
-        "projectProposal": projectProposal,
-        "id": id
-    }
-    return render(request, "project/projectCreateView.html", context)
-
-
-
-def projectUpdateView(request, id):
-    obj = get_object_or_404(Project, id=id)
-    projectProposal = obj.projectProposal
-    form = ProjectForm(request.POST or None, request.FILES or None, instance=obj, parent_projectProposal=projectProposal)
+def projectCreateView(request):
+    form = ProjectForm(request.POST or None)
     
     if form.is_valid():
         form.save()
-        return redirect("projectList", id=projectProposal.id)
+        return redirect("projectList")
+    
+    context = {"form": form}
+    return render(request, "project/projectCreateView.html", context)
 
-    context = {
-        "form": form,
-        "project": obj,
-        "projectProposal": projectProposal,
-    }
+def projectUpdateView(request, id):
+    obj = get_object_or_404(Project, id=id)
+    form = ProjectForm(request.POST or None, request.FILES or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        return redirect("/project/projectList")
+    context = {"form": form}
     return render(request, "project/projectUpdateView.html", context)
-
-
 
 def projectDeleteView(request, id):
     obj = get_object_or_404(Project, id=id)
     
     if request.method == "POST":
         obj.delete()
-        return redirect("projectList", id=obj.projectProposal.id)
+        return redirect("projectList")
     
     context = {
         "project": obj,
         "id": obj.projectProposal.id
     }
     return render(request, "project/projectDeleteView.html", context)
+
+def approveProposal(request, id):
+    proposal = get_object_or_404(ProjectProposal, id=id)
+
+    if request.method == 'POST':
+        # Check if the proposal is already approved
+        if proposal.accepted:
+            return JsonResponse({'success': False, 'error': 'Proposal already approved.'})
+
+        # Approve the proposal
+        proposal.accepted = True
+        proposal.acceptedDate = request.POST.get('approvalDate')
+        proposal.workOrderNo = request.POST.get('workOrderNo')
+        proposal.workOrderDate = request.POST.get('workOrderDate')
+        proposal.workOrderCost = request.POST.get('workAmount')
+        proposal.save()
+
+        # Create a new project
+        project = Project.objects.create(
+            projectProposal=proposal,
+            projectName=proposal.projectLead.projectName,
+            cost=proposal.proposalCost,
+            agency=proposal.projectLead.agency,
+            description=proposal.projectLead.description,
+            sector=proposal.projectLead.sector,
+            incharge=proposal.projectLead.scopeItem,
+            dateOfCommencement=proposal.submissionDate,
+            lastDateOfDelivery=proposal.submissionDate,  # Adjust as needed
+            workOrderNo=proposal.workOrderNo,
+            workOrderDate=proposal.workOrderDate,
+            file=proposal.docControlIndex.file if proposal.docControlIndex else None,
+        )
+
+        # Save project and render the updated row
+        project.save()
+        return render(request, "project/proposalRow.html", {"pp": proposal})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'})
 
 
 

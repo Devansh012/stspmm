@@ -1,11 +1,12 @@
 from django.db import models
-from Project.models import Project
+# from Project.models import Project
 from django.contrib.auth.models import User
 
 class DCI(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True , blank=True)
+    # project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True , blank=True)
     name = models.CharField(max_length=30, blank=True, null=True)
     # dciGroups = models.ForeignKey('DCIGroup', on_delete=models.CASCADE, blank=True, null=True)
+    cost = models.FloatField(blank=True,null=True)
     def __str__(self):
         return self.name
   

@@ -5,6 +5,13 @@ class SubmissionsForm(forms.ModelForm):
     class Meta:
         model = Submissions
         fields = '__all__'
+
+        widgets = {
+            'checkingDate': forms.DateInput(attrs={'type': 'date'}),
+            'printingDate': forms.DateInput(attrs={'type': 'date'}),
+            'submissionDate': forms.DateInput(attrs={'type': 'date'}),
+            'approvalDate': forms.DateInput(attrs={'type': 'date'}),
+        }
     
     def __init__(self, *args, **kwargs):
         super(SubmissionsForm, self).__init__(*args, **kwargs)

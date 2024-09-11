@@ -1,4 +1,5 @@
 from django.db import models
+from DCI.models import DCI
 from django.contrib.auth.models import User
 
 class Sector(models.Model):
@@ -64,7 +65,7 @@ class ProjectLead(models.Model):
     agency = models.CharField(max_length=30, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     sector = models.ForeignKey(Sector, on_delete=models.CASCADE, blank=True, null=True)
-    # scopeItem = models.ForeignKey(ScopeItem, on_delete=models.CASCADE, blank=True, null=True)
+    scopeItem = models.ForeignKey(ScopeItem, on_delete=models.CASCADE, blank=True, null=True)
     source = models.CharField(max_length=30, blank=True, null=True)
     sourceDescription = models.TextField(blank=True, null=True)
 
@@ -76,7 +77,7 @@ class ProjectProposal(models.Model):
     submittedTo = models.ForeignKey(Client,on_delete=models.CASCADE,blank=True,null=True)
     submissionDate = models.DateField(blank=True, null=True)
     proposalCost = models.DecimalField(max_digits=15, decimal_places=2,blank=True, null=True)
-    # docControlIndex = models.OneToOneField(DCI, blank=True, null=True, on_delete=models.CASCADE)
+    docControlIndex = models.OneToOneField(DCI, blank=True, null=True, on_delete=models.CASCADE)
     accepted = models.BooleanField(default=False, blank=True, null=True)
     acceptedDate = models.DateField(blank=True, null=True)
     workOrderNo = models.CharField(max_length=15, blank=True, null=True)
@@ -93,11 +94,14 @@ class Project(models.Model):
     agency = models.CharField(max_length=25, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     sector = models.OneToOneField(Sector, on_delete=models.CASCADE, blank=True, null=True)
-    scopeItems = models.ForeignKey(ScopeItem, on_delete=models.CASCADE, blank=True, null=True)
+    # scopeItems = models.ForeignKey(ScopeItem, on_delete=models.CASCADE, blank=True, null=True)
     incharge = models.ForeignKey(Staff, related_name='incharge_projects', on_delete=models.CASCADE, blank=True, null=True)
     # team = models.ForeignKey(Staff, related_name='team_projects', on_delete=models.CASCADE, blank=True, null=True) many to many
     dateOfCommencement = models.DateField(blank=True, null=True)
     lastDateOfDelivery = models.DateField(blank=True, null=True)
+    workOrderNo =  models.CharField(max_length=25,blank=True,null=True,verbose_name='Work Order Number')
+    workOrderDate = models.DateField(blank=True,null=True,verbose_name='Work Order Date')
+    file = models.FileField(blank=True,null=True,verbose_name='File')
     # finalDCI = models.OneToOneField(DCI, on_delete=models.CASCADE, blank=True, null=True)
     # documents = models.ForeignKey('docs.Document', on_delete=models.CASCADE, blank=True, null=True)
     def __str__(self):

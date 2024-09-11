@@ -5,10 +5,10 @@ from DCI.models import DCIItem
 class Tasks(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
     # dciItem = models.OneToOneField('DCI.DCIItem', on_delete=models.CASCADE, blank=True, null=True)
-    taskName = models.CharField(max_length=30, null=True, blank=True)
+    taskName = models.CharField(max_length=30, null=True, blank=True,verbose_name='Task Name')
     taskDescription = models.TextField(blank=True, null=True)
     assignedTo = models.ForeignKey(Staff, on_delete=models.CASCADE, max_length=30, blank=True, null=True)
-    assignmentDate = models.DateField(blank=True, null=True)
+    assignmentDate = models.DateField(auto_now_add=True,blank=True, null=True)
     targetDateOfCompletion = models.DateField(null=True, blank=True)
 
     def __str__(self):
@@ -18,6 +18,8 @@ class Tasks(models.Model):
 class TaskActivities(models.Model):
     task = models.ForeignKey(Tasks, on_delete=models.CASCADE, blank=True, null=True)
     dateOfEntry = models.DateField(auto_now_add=True, blank=True, null=True)
+    completionDate = models.DateField( blank=True, null=True)
+    entryDoneBy = models.ForeignKey(User,on_delete=models.SET_NULL, blank=True, null=True, related_name='entryDone')
     activityName = models.CharField(max_length=30, blank=True, null=True)
     activityDescription = models.TextField(blank=True, null=True)
 
@@ -29,7 +31,7 @@ class TaskActivities(models.Model):
 class Hinderances(models.Model):
     # project = models.ForeignKey('app.Project', on_delete=models.CASCADE, blank=True, null=True)
     dciItem = models.ForeignKey(DCIItem, on_delete=models.CASCADE, blank=True, null=True)
-    dateOfOccurrence = models.DateField(blank=True, null=True)
+    dateOfOccurrence = models.DateField(blank=True, null=True, verbose_name='Date of Occurance')
     description = models.TextField(blank=True, null=True)
     associatedStaff = models.ForeignKey(Staff, on_delete=models.CASCADE, blank=True, null=True)
     cleared = models.BooleanField(default=False, blank=True, null=True)

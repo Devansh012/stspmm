@@ -2,11 +2,11 @@
 {% block content %}
 <h2>Task Activities for {{ task.taskName }}</h2>
 <div>
-    <a href="{% url 'tasksList' %}" style="text-decoration: none;">
+    <a href="{% url 'tasksList' task.project.id %}" style="text-decoration: none;">
         <button type="button" class="btn btn-secondary btn-sm">
-            <span style="font-size: 1.2em;">&#8592; Back</span> <!-- Arrow with Back text -->
+          <span style="font-size: 1.2em;">&#8592; Back</span>
         </button>
-    </a>
+      </a>
     <a href="{% url 'taskActivitiesCreateView' task.id %}">
         <button type="button" class="btn btn-primary btn-sm" style="float:right;">
             Add New
@@ -17,6 +17,8 @@
     <thead>
         <tr>
             <th class="text-start">Date Of Entry</th>
+            <th class="text-start">Completion Date</th>
+            <th class="text-start">Entry Done By</th>
             <th class="text-start">Activity Name</th>
             <th class="text-end">Actions</th>
         </tr>
@@ -25,6 +27,8 @@
         {% for ta in taskactivities %}
         <tr>
             <td class="text-start">{{ ta.dateOfEntry }}</td>
+            <td class="text-start">{{ ta.completionDate }}</td>
+            <td class="text-start">{{ ta.entryDoneBy }}</td>
             <td class="text-start">{{ ta.activityName }}</td>
             <td class="text-end">
                 <a href="{% url 'taskActivitiesUpdateView' ta.id %}" title="Edit Task Activity"><i class="fas fa-edit" aria-hidden="true"></i></a>
