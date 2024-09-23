@@ -15,23 +15,23 @@
     <table class="table table-striped table-hover mt-5">
         <thead>
             <tr>
-                <th class="text-start">Name</th>
+                <th class="text-start border">Name</th>
                 
-                <th class="text-start">Email</th>
-                <th class="text-start">Mobile</th>
-                <th class="text-end">Actions</th>
+                <th class="text-start border">Email</th>
+                <th class="text-start border">Mobile</th>
+                <th class="text-end border">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for cl in client %}
                 <tr>
-                    <td class="text-start">{{ cl.name }}</td>
+                    <td class="text-start border">{{ cl.name }}</td>
                     
-                    <td class="text-start">{{ cl.email }}</td>
-                    <td class="text-start">{{ cl.mobile }}</td>
-                    <td class="text-end">
+                    <td class="text-start border">{{ cl.email }}</td>
+                    <td class="text-start border">{{ cl.mobile }}</td>
+                    <td class="text-end border">
                         <a href="{% url 'clientUpdateView' cl.id %}" title="Edit Client"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                        <form action="{% url 'clientDeleteView' cl.id %}" method="post" style="display:inline;" id="delete-form-{{ cl.id }}">
+                        <form action="{% url 'clientDeleteView' cl.id %}" class="mx-2" method="post" style="display:inline;" id="delete-form-{{ cl.id }}">
                             {% csrf_token %}
                             <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Client">
                                 <i class="fas fa-trash" aria-hidden="true"></i>

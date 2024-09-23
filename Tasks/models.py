@@ -9,6 +9,7 @@ class Tasks(models.Model):
     taskDescription = models.TextField(blank=True, null=True)
     assignedTo = models.ForeignKey(Staff, on_delete=models.CASCADE, max_length=30, blank=True, null=True)
     assignmentDate = models.DateField(auto_now_add=True,blank=True, null=True)
+    completed = models.BooleanField(default=False, blank=True, null=True)
     targetDateOfCompletion = models.DateField(null=True, blank=True)
 
     def __str__(self):
@@ -18,6 +19,7 @@ class Tasks(models.Model):
 class TaskActivities(models.Model):
     task = models.ForeignKey(Tasks, on_delete=models.CASCADE, blank=True, null=True)
     dateOfEntry = models.DateField(auto_now_add=True, blank=True, null=True)
+    completed =  models.BooleanField(default=False, blank=True, null=True)
     completionDate = models.DateField( blank=True, null=True)
     entryDoneBy = models.ForeignKey(User,on_delete=models.SET_NULL, blank=True, null=True, related_name='entryDone')
     activityName = models.CharField(max_length=30, blank=True, null=True)
@@ -45,7 +47,7 @@ class HinderanceFollowUp(models.Model):
     hinderance = models.ForeignKey(Hinderances, on_delete=models.CASCADE, blank=True,null=True)
     followUpDate = models.DateField(blank=True, null=True)
     followUpDescription = models.TextField(blank=True, null=True)
-    document = models.FileField(upload_to='documents/', blank=True, null=True)
+    document = models.FileField(upload_to='documents/')
 
     def __str__(self):
         return str(self.hinderance)

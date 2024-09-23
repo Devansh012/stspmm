@@ -1,16 +1,13 @@
-{% extends "registration/base.html" %}
-{% block content %}
-<form method="POST"  enctype="multipart/form-data">
-
-  <h3>Add New Scope Group</h3>
-
-  {% csrf_token %}
-
-  {{form.as_p}} 
- 
-  <button type="submit" class="btn btn-primary">Save changes</button>
-  <a href="{% url 'scopeGroupList' %}" class="btn btn-secondary">Cancel</a>
-
-   
+<h5 class="modal-title">Add New Scope Group</h5>
+<div class="modal-body">
+    <form method="post" 
+      hx-post="{% url 'scopeGroupCreateView' %}" 
+      hx-target="#scope-group-list" 
+      hx-swap="outerHTML">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="#" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
 </form>
-{% endblock %}
+
+</div>

@@ -12,47 +12,45 @@
     <table class="table table-striped table-hover mt-5">
         <thead>
             <tr>
-                <th class="text-start" >Project Name</th>
-                <th class="text-start">Cost</th>
-                <th class="text-start">Agency</th>
+                <th class="text-start border" >Project Name</th>
+                <th class="text-start border">Cost</th>
+                <th class="text-start border">Agency</th>
                 {% comment %} <th>Description</th> {% endcomment %}
-                <th class="text-start">Date Of Commencement</th>
-                <th class="text-start">Last Date Of Delivery</th>
-                <th class="text-start">Sector</th>
+                <th class="text-start border">Date Of Commencement</th>
+                <th class="text-start border">Last Date Of Delivery</th>
+                <th class="text-start border">Sector</th>
                 {% comment %} <th>Scope Items</th> {% endcomment %}
-                <th class="text-end">Tasks</th>
-                <th class="text-end">Actions</th>
+                <th class="text-end border">Tasks</th>
+                <th class="text-end border">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for pj in projects %}
                 <tr>
-                    <td class="text-start">{{ pj.projectName }}</td>
-                    <td class="text-start">{{ pj.cost }}</td>
-                    <td class="text-start">{{ pj.agency }}</td>
+                    <td class="text-start border">{{ pj.projectName }}</td>
+                    <td class="text-start border">{{ pj.cost }}</td>
+                    <td class="text-start border">{{ pj.agency }}</td>
                     {% comment %} <td>{{ pj.description }}</td> {% endcomment %}
-                    <td class="text-start">{{ pj.dateOfCommencement }}</td>
-                    <td class="text-start">{{ pj.lastDateOfDelivery }}</td>
-                    <td class="text-start">{{ pj.sector }}</td>
+                    <td class="text-start border">{{ pj.dateOfCommencement }}</td>
+                    <td class="text-start border">{{ pj.lastDateOfDelivery }}</td>
+                    <td class="text-start border">{{ pj.sector }}</td>
                     {% comment %} <td>{{ pj.scopeItems }}</td> {% endcomment %}
-                    <td class="text-end">
-                        <a href="{% url 'tasksList' pj.id %}" title="View Task"><i class="fas fa-tasks" aria-hidden="true"></i></a>
+                    <td class="text-end border">
+                        <a href="{% url 'tasksList' pj.id %}" class="mx-4" title="View Task"><i class="fas fa-tasks" aria-hidden="true"></i></a>
                     </td>
-                    <td class="text-end">
+                    <td class="text-end border">
                         <a href="{% url 'projectUpdateView' pj.id %}" title="Edit Project"><i class="fas fa-edit"></i></a>
-                        <form action="{% url 'projectDeleteView' pj.id %}" title="Delete Project" method="post" style="display:inline;" id="delete-form-{{ pj.id }}">
+                        <form action="{% url 'projectDeleteView' pj.id %}" class="mx-2" title="Delete Project" method="post" style="display:inline;" id="delete-form-{{ pj.id }}">
                             {% csrf_token %}
                             <button type="submit" style="border:none; background:none; padding:0;" data-bs-toggle="tooltip" title="Delete Project">
                                 <i class="fas fa-trash"></i> <!-- Font Awesome icon for Delete -->
                               </button>
                         </form>
                         <script>
-                            document.querySelectorAll('form[id^="delete-form-"]').forEach(form => {
-                                form.addEventListener('submit', function (event) {
-                                    if (!confirm('Are you sure you want to delete this item?')) {
-                                        event.preventDefault(); // Prevent form submission if the user cancels
-                                    }
-                                });
+                            document.querySelector('#delete-form-{{ pj.id }}').addEventListener('submit', function (event) {
+                                if (!confirm('Are you sure you want to delete this item "{{ pj.name }}"?')) {
+                                    event.preventDefault(); // Prevent form submission if the user cancels
+                                }
                             });
                         </script>
                     </td>

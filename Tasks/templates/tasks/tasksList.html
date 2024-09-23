@@ -16,29 +16,29 @@
     <table  class="table table-striped table-hover mt-4">
         <thead>
             <tr>
-                <th class="text-start">Task Name</th>
-                
-                <th class="text-start">Assignment Date</th>
-                <th class="text-start">Target Date Of Completion</th>
-                <th class="text-start">Project Name</th>  <!-- Added Project Name column -->
-                <th class="text-end">Task Activities</th>
-                <th class="text-end">Actions</th>
+                <th class="text-start border">Task Name</th>
+                <th class="text-start border">Assigned To</th>
+                <th class="text-start border">Assignment Date</th>
+                <th class="text-start border">Target Date Of Completion</th>
+                <th class="text-start border">Project Name</th>  <!-- Added Project Name column -->
+                <th class="text-end border">Task Activities</th>
+                <th class="text-end border">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for tk in tasks %}
             <tr>
-                <td class="text-start">{{ tk.taskName }}</td>
-               
-                <td class="text-start">{{ tk.assignmentDate }}</td>
-                <td class="text-start">{{ tk.targetDateOfCompletion }}</td>
-                <td class="text-start">{{ tk.project }}</td> <!-- Displaying Project Name -->
-                <td class="text-end">
-                    <a href="{% url 'taskActivitiesList' tk.id %}" title="View Task Activities"><i class="fas fa-tasks" aria-hidden="true"></i></a>
+                <td class="text-start border">{{ tk.taskName }}</td>
+                <td class="text-start border">{{ tk.assignedTo }}</td>               
+                <td class="text-start border">{{ tk.assignmentDate }}</td>
+                <td class="text-start border">{{ tk.targetDateOfCompletion }}</td>
+                <td class="text-start border">{{ tk.project }}</td> <!-- Displaying Project Name -->
+                <td class="text-end border">
+                    <a href="{% url 'taskActivitiesList' tk.id %}" class="mx-5" title="View Task Activities"><i class="fas fa-tasks" aria-hidden="true"></i></a>
                 </td>
-                <td class="text-end">
+                <td class="text-end border">
                     <a href="{% url 'tasksUpdateView' tk.id %}" title="Edit Task"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                    <form action="{% url 'tasksDeleteView' tk.id %}" method="post" style="display:inline;" id="delete-form-{{ tk.id }}">
+                    <form action="{% url 'tasksDeleteView' tk.id %}" class="mx-2" method="post" style="display:inline;" id="delete-form-{{ tk.id }}">
                         {% csrf_token %}
                         <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Task">
                             <i class="fas fa-trash" aria-hidden="true"></i>

@@ -133,21 +133,21 @@
           <nav>
             <ul>
               <li><a href="{% url 'home' %}">Home</a></li>
-              <li><a href="{% url 'dciList' %}">DCI</a></li>
-              <li><a href="{% url 'folderList' %}">Docs</a></li>
               <li><a href="{% url 'plList' %}">Project Lead</a></li>
               <li><a href="{% url 'projectList' %}">Project</a></li>
+              <li><a href="{% url 'hinderancesList' %}">Hinderances</a></li>
+              <li><a href="{% url 'submissionsList' %}">Submissions</a></li>
+              <li><a href="{% url 'dciList' %}">DCI</a></li>
+              <li><a href="{% url 'folderList' %}">Docs</a></li>
               
               <!-- These items should stay at the top -->
               <li><a href="{% url 'scopeGroupList' %}">Scope Group</a></li>
-              {% comment %} <li><a href="{% url 'tasksList' %}">Tasks</a></li> {% endcomment %}
-              <li><a href="{% url 'hinderancesList' %}">Hinderances</a></li>
-              <li><a href="{% url 'submissionsList' %}">Submissions</a></li>
-              <!-- Move these items to the bottom -->
               <li><a href="{% url 'sectorList' %}">Sector</a></li>
+              {% comment %} <li><a href="{% url 'tasksList' %}">Tasks</a></li> {% endcomment %}
+              <!-- Move these items to the bottom -->
+              <li><a href="{% url 'clientList' %}">Client</a></li>
               <li><a href="{% url 'cpList' %}">Contact Person</a></li>
               <li><a href="{% url 'staffList' %}">Staff</a></li>
-              <li><a href="{% url 'clientList' %}">Client</a></li>
             </ul>
           </nav>
         </aside>
@@ -184,5 +184,23 @@
         document.getElementById('modal-body').innerHTML = '';
       });
     </script>
+    <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="modalLabel">Form</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="modal-body-content">
+                  <!-- HTMX will load form content here -->
+              </div>
+          </div>
+      </div>
+  </div>
+  <script>
+    document.addEventListener('htmx:afterRequest', (event) => {
+        $('#form-modal').modal('hide');
+    });
+</script>
   </body>
 </html>

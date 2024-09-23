@@ -6,6 +6,7 @@ from Docs.models import Document
 # Create your models here.
 class Submissions(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    name =  models.CharField(max_length=20,verbose_name='Name')
     revisionNo = models.IntegerField(blank=True, null=True)
     whyRevision = models.TextField(blank=True, null=True)
     checkedBy = models.ForeignKey(Staff, on_delete=models.CASCADE, blank=True, null=True)

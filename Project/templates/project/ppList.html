@@ -1,3 +1,4 @@
+<!-- ppList.html -->
 {% extends "registration/base.html" %}
 {% block content %}
     <h2>Project Proposal List for {{ projectLead.projectName }}</h2>
@@ -14,104 +15,112 @@
     </a>
 
     <!-- Table displaying Project Proposals -->
-    <table class="table mt-3" >
+    <table class="table table-striped table-hover mt-3">
         <thead>
             <tr>
-                <th>Submission Date</th>
-                <th>Proposal Cost</th>
-                <th>Accepted</th>
-                <th>DCI</th>
-                <th>Acceptance Date</th>
-                <th>Work Order Number</th>
-                <th>Actions</th>
+                <th class="text-start border">Submission Date</th>
+                <th class="text-start border">Proposal Cost</th>
+                <th class="text-start border">Accepted</th>
+                <th class="text-start border">DCI</th>
+                <th class="text-start border">Acceptance Date</th>
+                <th class="text-start border">Work Order Number</th>
+                <th class="text-end border">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for pp in projectProposals %}
-            <tr>
-                <td>{{ pp.submissionDate }}</td>
-                <td>{{ pp.proposalCost }}</td>
-                <td>{{ pp.accepted }}</td>
-                <td>{{ pp.docControlIndex }}</td>
-                <td>{{ pp.acceptedDate }}</td>
-                <td>{{ pp.workOrderNo }}</td>
-                <td>
-                    <a href="{% url 'ppUpdateView' pp.id %}" title="Edit"><i class="fas fa-edit"></i></a>
-                    <form action="{% url 'ppDeleteView' pp.id %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" style="border:none; background:none; padding:0;" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
-                    <!-- Approve button if not accepted -->
-                    {% if not pp.accepted %}
-                        <button type="button" class="btn btn-primary btn-sm"
-                                hx-get="{% url 'approveProposal' pp.id %}"
-                                hx-target="#proposal-{{ pp.id }}"
-                                hx-swap="outerHTML"
-                                data-bs-toggle="modal"
-                                data-bs-target="#approveModal-{{ pp.id }}">
-                            Approve
-                        </button>
-                    {% endif %}
-                </td>
-            </tr>
+                <tr>
+                    <td class="text-start border">{{ pp.submissionDate }}</td>
+                    <td class="text-start border">{{ pp.proposalCost }}</td>
+                    <td class="text-start border">{{ pp.accepted }}</td>
+                    <td class="text-start border">
+                        {% if pp.docControlIndex %}
+                            <a href="{% url 'dciDetailView' pp.docControlIndex.id %}" class="btn btn-link">{{ pp.docControlIndex.name }}</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td class="text-start border">{{ pp.acceptedDate }}</td>
+                    <td class="text-start border">{{ pp.workOrderNo }}</td>
+                    <td class="text-end border">
+                        <a href="{% url 'ppUpdateView' pp.id %}" title="Edit"><i class="fas fa-edit"></i></a>
+                        <form action="{% url 'ppDeleteView' pp.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="border:none; background:none; padding:0;" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+
+                        <!-- Approve button appears only if the projectLead is not approved -->
+                        {% if not projectLead.approved and not pp.accepted %}
+                            <button type="button" class="btn btn-primary btn-sm" onclick="showApprovalDialog('{{ pp.id }}')">
+                                Approved
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <!-- Modal structure for approving proposals -->
-     {% csrf_token %}
-    {% for pp in projectProposals %}
-    <div class="modal fade" id="approveModal-{{ pp.id }}" tabindex="-1" aria-labelledby="approveModalLabel-{{ pp.id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="approveModalLabel-{{ pp.id }}">Approve Proposal</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="approveForm-{{ pp.id }}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="approvalDate-{{ pp.id }}" class="form-label">Approval Date</label>
-                            <input type="date" class="form-control" id="approvalDate-{{ pp.id }}" name="approvalDate" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="workOrderNo-{{ pp.id }}" class="form-label">Work Order No.</label>
-                            <input type="text" class="form-control" id="workOrderNo-{{ pp.id }}" name="workOrderNo" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="workOrderDate-{{ pp.id }}" class="form-label">Work Order Date</label>
-                            <input type="date" class="form-control" id="workOrderDate-{{ pp.id }}" name="workOrderDate" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="workAmount-{{ pp.id }}" class="form-label">Work Amount</label>
-                            <input type="number" class="form-control" id="workAmount-{{ pp.id }}" name="workAmount" required>
-                        </div>
-                        <button type="button" 
-                                class="btn btn-primary"
-                                hx-post="{% url 'approveProposal' pp.id %}" 
-                                hx-target="#proposal-{{ pp.id }}" 
-                                hx-include="#approveForm-{{ pp.id }}" 
-                                hx-swap="outerHTML">
-                            Submit
-                        </button>
-                    </form>
-                    
-                </div>
-            </div>
-        </div>
+    <!-- Approval Dialog -->
+    <div id="approvalDialog" style="display:none;">
+        <form method="post" id="approvalForm">
+            {% csrf_token %}
+            <input type="hidden" name="proposal_id" id="proposal_id">
+            <label for="approvalDate">Approval Date</label>
+            <input type="date" id="approvalDate" name="approvalDate" required>
+            
+            <label for="workOrderNo">Work Order No.</label>
+            <input type="text" id="workOrderNo" name="workOrderNo" required>
+            
+            <label for="workOrderDate">Work Order Date</label>
+            <input type="date" id="workOrderDate" name="workOrderDate" required>
+            
+            <label for="workAmount">Work Amount</label>
+            <input type="number" id="workAmount" name="workAmount" required>
+
+            <button type="submit">Approve</button>
+        </form>
     </div>
-    {% endfor %}
 
     <script>
-        document.addEventListener('htmx:afterSwap', (event) => {
-            if (event.detail.target.id === 'approveModal') {
-                let modal = new bootstrap.Modal(document.getElementById('approveModal'));
-                modal.show();
-            }
+        function showApprovalDialog(proposalId) {
+            document.getElementById('proposal_id').value = proposalId;
+            document.getElementById('approvalDialog').style.display = 'block';
+        }
+
+        // Handle form submission for approval
+        document.getElementById('approvalForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            let proposalId = document.getElementById('proposal_id').value;
+            let approvalDate = document.getElementById('approvalDate').value;
+            let workOrderNo = document.getElementById('workOrderNo').value;
+            let workOrderDate = document.getElementById('workOrderDate').value;
+            let workAmount = document.getElementById('workAmount').value;
+
+            // Send the data via AJAX (Django view will handle this)
+            fetch("{% url 'ppApproveView' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    proposalId: proposalId,
+                    approvalDate: approvalDate,
+                    workOrderNo: workOrderNo,
+                    workOrderDate: workOrderDate,
+                    workAmount: workAmount
+                })
+            }).then(response => {
+                if (response.ok) {
+                    // Handle success (e.g., hide the dialog, reload the page, etc.)
+                    alert('Project approved successfully!');
+                    location.reload();
+                }
+            });
         });
     </script>
 {% endblock %}
-

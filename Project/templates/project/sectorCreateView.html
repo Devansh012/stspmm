@@ -1,6 +1,6 @@
 <h2>Add Sector</h2>
 
-<form method="POST" hx-post="{% url 'sectorCreateView' %}" hx-target=".table tbody" hx-swap="beforeend" hx-on="htmx:afterRequest:$('#htmx-modal').modal('hide')">
+<form method="POST" autocomplete="off" hx-post="{% url 'sectorCreateView' %}" hx-target=".table tbody" hx-swap="beforeend" hx-on="htmx:afterRequest:$('#htmx-modal').modal('hide')">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Save</button>

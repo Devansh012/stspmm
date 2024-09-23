@@ -1,7 +1,7 @@
 <!-- Sector Row -->
 <tr id="sector-{{ sc.id }}">
-    <td class="text-start">{{ sc.sectorName }}</td>
-    <td class="text-end sector-actions">
+    <td class="text-start border">{{ sc.sectorName }}</td>
+    <td class="text-end border sector-actions">
         <!-- Edit Sector link -->
         <a href="{% url 'sectorUpdateView' sc.id %}" hx-get="{% url 'sectorUpdateView' sc.id %}" hx-target="#modal-body" hx-swap="innerHTML" title="Edit Sector"><i class="fas fa-edit" aria-hidden="true"></i></a>
 

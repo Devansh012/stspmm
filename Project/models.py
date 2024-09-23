@@ -63,10 +63,11 @@ class ProjectLead(models.Model):
     projectName = models.CharField(max_length=50)
     cost = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     agency = models.CharField(max_length=30, blank=True, null=True)
+    approved = models.BooleanField(default=False,null=True,blank=True)
     description = models.TextField(blank=True, null=True)
     sector = models.ForeignKey(Sector, on_delete=models.CASCADE, blank=True, null=True)
     scopeItem = models.ForeignKey(ScopeItem, on_delete=models.CASCADE, blank=True, null=True)
-    source = models.CharField(max_length=30, blank=True, null=True)
+    source = models.CharField(max_length=30)
     sourceDescription = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -93,7 +94,7 @@ class Project(models.Model):
     cost = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     agency = models.CharField(max_length=25, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    sector = models.OneToOneField(Sector, on_delete=models.CASCADE, blank=True, null=True)
+    sector = models.OneToOneField(Sector, on_delete=models.CASCADE)
     # scopeItems = models.ForeignKey(ScopeItem, on_delete=models.CASCADE, blank=True, null=True)
     incharge = models.ForeignKey(Staff, related_name='incharge_projects', on_delete=models.CASCADE, blank=True, null=True)
     # team = models.ForeignKey(Staff, related_name='team_projects', on_delete=models.CASCADE, blank=True, null=True) many to many

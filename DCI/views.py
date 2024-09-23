@@ -57,6 +57,7 @@ def dciDeleteView(request, id):
         return HttpResponseRedirect("/dci/dciList")
     return render(request, "dci/dciList.html")
 
+
 def copyDci(request, id):
    
     dci = get_object_or_404(DCI, id=id)

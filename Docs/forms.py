@@ -4,11 +4,19 @@ from .models import Folder, Document
 class FolderForm(forms.ModelForm):
     class Meta:
         model = Folder
-        fields = ['name', 'parentFolder', 'notes', 'protected', 'password']
+        fields = ['name', 'parentFolder', 'notes']
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
+        # Add Bootstrap class to fields
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+        # Conditionally disable parentFolder if necessary
+        if self.instance and self.instance.pk:
+            self.fields['parentFolder'].disabled = True
 
     def save(self, commit=True):
         folder = super().save(commit=False)
@@ -26,6 +34,10 @@ class DocumentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
+        # Add Bootstrap class to fields
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
         document = super().save(commit=False)

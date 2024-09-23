@@ -5,7 +5,11 @@ class DCIForm(forms.ModelForm):
     class Meta:
         model = DCI
         fields = '__all__'
-
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
 class DCIGroupForm(forms.ModelForm):
     class Meta:
@@ -17,7 +21,14 @@ class DCIGroupForm(forms.ModelForm):
         super(DCIGroupForm, self).__init__(*args, **kwargs)
         
         if parent_dci:
-            self.fields['dci'] = forms.ModelChoiceField(queryset=DCI.objects.filter(id=parent_dci.id), initial=parent_dci, disabled=True)
+            self.fields['dci'] = forms.ModelChoiceField(
+                queryset=DCI.objects.filter(id=parent_dci.id), 
+                initial=parent_dci, 
+                disabled=True
+            )
+        
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
 class DCIItemForm(forms.ModelForm):
     class Meta:
@@ -33,6 +44,9 @@ class DCIItemForm(forms.ModelForm):
         self.fields['dciGroup'].disabled = True
         if self.dci_group:
             self.fields['dciGroup'].initial = self.dci_group
+        
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
         dci_item = super().save(commit=False)
@@ -43,8 +57,6 @@ class DCIItemForm(forms.ModelForm):
         if commit:
             dci_item.save()
         return dci_item
-
-
 
 
 class ExcelUploadForm(forms.Form):

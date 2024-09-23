@@ -1,6 +1,6 @@
 <h2>Update Sector</h2>
 
-<form method="POST" hx-post="{% url 'sectorUpdateView' sc.id %}" hx-target="#sector-{{ sc.id }}" hx-swap="outerHTML" hx-on="htmx:afterRequest:$('#htmx-modal').modal('hide')">
+<form method="POST" autocomplete="off" hx-post="{% url 'sectorUpdateView' sc.id %}" hx-target="#sector-{{ sc.id }}" hx-swap="outerHTML" hx-on="htmx:afterRequest:$('#htmx-modal').modal('hide')">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Update</button>

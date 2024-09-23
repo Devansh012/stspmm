@@ -1,50 +1,78 @@
 {% extends "registration/base.html" %}
 {% block content %}
-    <h2>Scope Group List</h2>
-    <form method="POST" action="{% url 'scopeGroupList' %}">
-        {% csrf_token %}
-        <div class="container mt-0"></div>
-    </form>
-    
-    <a href="{% url 'scopeGroupCreateView' %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
-          Add New
-        </button>
-    </a>
+    <div class="row">
+        <!-- Scope Group List -->
+        <div class="col-md-6">
+            <h2>Scope Group List</h2>
+            <a 
+               hx-get="{% url 'scopeGroupCreateView' %}" 
+               hx-target="#modal-body-content" 
+               hx-trigger="click"
+               hx-swap="innerHTML" 
+               data-bs-toggle="modal" 
+               data-bs-target="#form-modal" 
+               class="btn btn-primary mb-3">Add New</a>
+            <div id="scope-group-list">
+                <table class="table table-striped table-hover mt-3">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Name</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sg in scopeGroups %}
+                            <tr hx-get="{% url 'scopeItemListHTMX' sg.id %}" hx-target="#scope-item-list" hx-swap="innerHTML">
+                                <td class="text-start">{{ sg.name }}</td>
+                                <td class="text-end">
+                                    <a 
+                                       hx-get="{% url 'scopeGroupUpdateView' sg.id %}" 
+                                       hx-target="#modal-body-content" 
+                                       hx-trigger="click" 
+                                       hx-swap="innerHTML" 
+                                       data-bs-toggle="modal" 
+                                       data-bs-target="#form-modal" 
+                                       title="Edit Scope Group">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{% url 'scopeGroupDeleteView' sg.id %}" method="post" style="display:inline;" id="delete-form-{{ sg.id }}">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete ScopeGroup">
+                                            <i class="fas fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                    <script>
+                                        document.querySelector('#delete-form-{{ sg.id }}').addEventListener('submit', function (event) {
+                                            if (!confirm('Are you sure you want to delete this item "{{ sg.name }}"?')) {
+                                                event.preventDefault();
+                                            }
+                                        });
+                                    </script>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <table class="table table-striped table-hover mt-5">
-        <thead>
-            <tr>
-                <th class="text-start">Name</th>
-                <th class="text-end">Scope Items</th>
-                <th class="text-end">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for sg in scopeGroups %}
-                <tr>
-                    <td class="text-start">{{ sg.name }}</td>
-                    <td class="text-end">
-                        <a href="{% url 'scopeItemList' sg.id %}" title="View Scope ItemList"><i class="fas fa-users"></i></a>
-                    </td>
-                    <td class="text-end">
-                        <a href="{% url 'scopeGroupUpdateView' sg.id %}" title="Edit Scope Group"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                        <form action="{% url 'scopeGroupDeleteView' sg.id %}" method="post" style="display:inline;" id="delete-form-{{ sg.id }}">
-                            {% csrf_token %}
-                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Scope Group">
-                                <i class="fas fa-trash" aria-hidden="true"></i>
-                            </button>
-                        </form>
-                        <script>
-                            document.querySelector('#delete-form-{{ sg.id }}').addEventListener('submit', function (event) {
-                                if (!confirm('Are you sure you want to delete this item "{{ sg.name }}"?')) {
-                                    event.preventDefault(); // Prevent form submission if the user cancels
-                                }
-                            });
-                        </script>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <!-- Scope Item List -->
+        <div class="col-md-6">
+            <h2>Scope Items</h2>
+            <a 
+               href="{% if scopeGroups %}{% url 'scopeItemCreateView' scopeGroups.0.id %}{% else %}#{% endif %}" 
+               hx-get="{% if scopeGroups %}{% url 'scopeItemCreateView' scopeGroups.0.id %}{% endif %}" 
+               hx-target="#modal-body-content" 
+               hx-swap="innerHTML" 
+               data-bs-toggle="modal" 
+               data-bs-target="#form-modal" 
+               class="btn btn-primary mb-3" 
+               id="add-scope-item-btn">
+                {% if scopeGroups %}Add New{% else %}Select a Scope Group{% endif %}
+            </a>
+            <div id="scope-item-list">
+                <p>Select a scope group to see its items</p>
+            </div>
+        </div>
+    </div>
 {% endblock %}

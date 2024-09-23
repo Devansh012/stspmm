@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render, redirect,HttpResponse
+from django.contrib import messages
 from .models import Document, Folder
 from .forms import DocumentForm, FolderForm
 from django.http import FileResponse
@@ -41,10 +42,47 @@ def folderDeleteView(request, id):
         return redirect("/docs/folderList")
     return render(request, "docs/folderDeleteView.html", context2)
 
+def toggle_protection(request):
+    if request.method == "POST":
+        folder_id = request.GET.get("folder_id")
+        password = request.POST.get("password")
+
+        folder = get_object_or_404(Folder, id=folder_id)
+        
+        # Toggle protection status and save the password
+        if folder.protected:
+            # Unlock folder
+            folder.protected = False
+            folder.password = None  # Clear password on unlock
+        else:
+            # Lock folder
+            folder.protected = True
+            folder.password = password  # Set password on lock
+
+        folder.save()
+        return redirect('folderList')
+    
+    return HttpResponse(status=400)
+
 def documentList(request, id):
     folder = get_object_or_404(Folder, id=id)
-    documents = Document.objects.filter(folder=folder)
 
+    # Check if the folder is protected
+    if folder.protected:
+        # Check if the correct password is already stored in the session
+        if not request.session.get(f'unlocked_folder_{folder.id}'):
+            if request.method == "POST":
+                entered_password = request.POST.get("password")
+                if folder.password == entered_password:
+                    # Store folder unlocked status in session
+                    request.session[f'unlocked_folder_{folder.id}'] = True
+                    return redirect('documentList', id=folder.id)
+                else:
+                    messages.error(request, "Password doesn't match.")
+            return render(request, 'docs/folder_password.html', {"folder": folder})
+
+    # If folder is not protected or already unlocked, show the document list
+    documents = Document.objects.filter(folder=folder)
     context = {"documents": documents, "folder": folder}
     return render(request, "docs/documentList.html", context)
 

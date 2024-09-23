@@ -1,16 +1,9 @@
-{% extends "registration/base.html" %}
-{% block content %}
-<form method="POST"  enctype="multipart/form-data">
-
-  <h3>Add New Scope Item for {{ scopeGroup_name }}</h3>
-
-  {% csrf_token %}
-
-  {{form.as_p}} 
- 
-  <button type="submit" class="btn btn-primary">Save changes</button>
-  <a href="{% url 'scopeItemList' id %}" class="btn btn-secondary">Cancel</a>
-
-   
-</form>
-{% endblock %}
+<h5 class="modal-title">Add New Scope Item for "{{ scopeGroup.name }}"</h5>
+<div class="modal-body">
+    <form method="post" hx-post="{% url 'scopeItemCreateView' scopeGroup.id %}" hx-target="#scope-item-list" hx-swap="outerHTML" hx-on="htmx:afterRequest: $('#form-modal').modal('hide')">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="#" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+    </form>
+</div>

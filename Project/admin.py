@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Sector, ScopeItem, Staff,Client, ContactPerson,ProjectLead,Project,ProjectProposal
+from .models import Sector,ScopeGroup, ScopeItem, Staff,Client, ContactPerson,ProjectLead,Project,ProjectProposal
 # Register your models here.
 admin.site.register(Sector)
+admin.site.register(ScopeGroup)
 admin.site.register(ScopeItem)
 admin.site.register(Staff)
 admin.site.register(Client)

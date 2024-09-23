@@ -40,23 +40,24 @@
 <table class="table table-hover table-striped">
     <thead>
         <tr>
-            <th class="text-start">sNo</th>
-            <th class="text-start">Item Code</th>
-            <th class="text-start">Name</th>
-            <th class="text-start">Document No</th>
-            <th class="text-end">Actions</th>
+            <th class="text-start border">sNo</th>
+            <th class="text-start border">Item Code</th>
+            <th class="text-start border">Name</th>
+            <th class="text-start border">Document No</th>
+            <th class="text-end border">Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for dt in dciItems %}
         <tr>
-            <td class="text-start">{{ dt.sNo }}</td>
-            <td class="text-start">{{ dt.itemCode }}</td>
-            <td class="text-start">{{ dt.name }}</td>
-            <td class="text-start">{{ dt.documentNo }}</td>
-            <td class="text-end">
-                <a href="{% url 'dciItemUpdateView' dt.id %}" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>
-                <form action="{% url 'dciItemDeleteView' dt.id %}" method="post" style="display:inline;" id="delete-form-{{ dt.id }}">
+            <td class="text-start border">{{ dt.sNo }}</td>
+            <td class="text-start border">{{ dt.itemCode }}</td>
+            <td class="text-start border">{{ dt.name }}</td>
+            <td class="text-start border">{{ dt.documentNo }}</td>
+
+            <td class="text-end border">
+                <a href="{% url 'dciItemUpdateView' dt.id %}" class="mx-1" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>
+                <form action="{% url 'dciItemDeleteView' dt.id %}" class="mx-2" method="post" style="display:inline;" id="delete-form-{{ dt.id }}">
                     {% csrf_token %}
                     <button type="submit" style="border:none; background:none; padding:0;" data-bs-toggle="tooltip" title="Delete">
                         <i class="fas fa-trash"></i> <!-- Font Awesome icon for Delete -->

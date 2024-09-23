@@ -1,7 +1,7 @@
 {% extends "registration/base.html" %}
 {% block content %}
 <h3>Add New DCI Group for DCI {{ dci_name }}</h3>
-<form method="POST">
+<form method="POST" autocomplete="off">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Submit</button>

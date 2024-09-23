@@ -5,8 +5,8 @@
     <div>
         <!-- Back Button -->
         <a href="{% url 'hinderancesList' %}" style="text-decoration: none;">
-            <button type="button" class="btn btn-secondary btn-sm" style="float:left;">
-                Back
+            <button type="button" class="btn btn-secondary btn-sm">
+                <span style="font-size: 1.2em;">&#8592; Back</span>
             </button>
         </a>
         
@@ -18,26 +18,26 @@
         </a>
     </div>
 
-    <table class="table table-striped table-hover mt-5">
+    <table class="table table-striped table-hover mt-3">
         <thead>
             <tr>
-                <th class="text-start">Follow Up Date</th>
-                <th class="text-end">Document</th>
-                <th class="text-end">Actions</th>
+                <th class="text-start border">Follow Up Date</th>
+                <th class="text-end border">Document</th>
+                <th class="text-end border">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for hf in hinderanceFollowUp %}
                 <tr>
-                    <td class="text-start">{{ hf.followUpDate }}</td>
-                    <td class="text-end">
-                        <a href="{% url 'documentDownloadView' hf.id %}" title="Download Document">
+                    <td class="text-start border">{{ hf.followUpDate }}</td>
+                    <td class="text-end border">
+                        <a href="{% url 'documentDownloadView' hf.id %}" class="mx-5" title="Download Document">
                             <i class="fas fa-download" aria-hidden="true"></i>
                         </a>
                     </td>
-                    <td class="text-end">
+                    <td class="text-end border">
                         <a href="{% url 'hinderanceFollowUpUpdateView' hf.id %}" title="Edit Follow Up"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                        <form action="{% url 'hinderanceFollowUpDeleteView' hf.id %}" method="post" style="display:inline;" id="delete-form-{{ hf.id }}">
+                        <form action="{% url 'hinderanceFollowUpDeleteView' hf.id %}" class="mx-2" method="post" style="display:inline;" id="delete-form-{{ hf.id }}">
                             {% csrf_token %}
                             <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Follow Up">
                                 <i class="fas fa-trash" aria-hidden="true"></i>

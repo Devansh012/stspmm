@@ -13,7 +13,7 @@ urlpatterns = [
     path('scopeGroupUpdateView/<id>', views.scopeGroupUpdateView, name='scopeGroupUpdateView'),
     path('scopeGroupDeleteView/<id>', views.scopeGroupDeleteView, name='scopeGroupDeleteView'),
     
-    path('scopeItemList/<int:id>/', views.scopeItemList, name='scopeItemList'),
+    path('scopeItemListHTMX/<int:id>/', views.scopeItemListHTMX, name='scopeItemListHTMX'),
     path('scopeItemCreateView/<int:id>/', views.scopeItemCreateView, name='scopeItemCreateView'),
     path('scopeItemUpdateView/<id>', views.scopeItemUpdateView, name='scopeItemUpdateView'),
     path('scopeItemDeleteView/<id>', views.scopeItemDeleteView, name='scopeItemDeleteView'),
@@ -42,10 +42,13 @@ urlpatterns = [
     path('ppCreateView/<int:id>/',views.ppCreateView, name="ppCreateView"),
     path('ppUpdateView/<id>', views.ppUpdateView, name="ppUpdateView"),
     path('ppDeleteView/<id>',views.ppDeleteView,name ="ppDeleteView"),
+    path('dciDetailView/<int:id>/', views.dciDetailView, name='dciDetailView'),
+
 
     path('projectList/', views.projectList, name='projectList'),
     path('projectCreateView/', views.projectCreateView, name='projectCreateView'),
     path('projectUpdateView/<id>', views.projectUpdateView, name='projectUpdateView'),
     path('projectDeleteView/<id>', views.projectDeleteView, name='projectDeleteView'),
-    path('approveProposal/<int:id>/', views.approveProposal, name='approveProposal'),]
+    path('approve-proposal/', views.approve_proposal, name='ppApproveView'),
+    ]
 
