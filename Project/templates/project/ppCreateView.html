@@ -1,17 +1,45 @@
 {% extends "registration/base.html" %}
-{% block content %}
-<form method="POST"  enctype="multipart/form-data" autocomplete="off">
-
-  <h3>Add New Project Proposal for {{ projectLead.projectName }}  </h3>
-
+{% block content %}
+<form method="POST" enctype="multipart/form-data" autocomplete="off">
   {% csrf_token %}
+  
+  <h3>Add New Project Proposal for {{ projectLead.projectName }}</h3>
+  
+  <!-- First Div with submissionDate, proposalCost, and docControlIndex -->
+  <div id="basic-info" class="form-group">
+    {{ form.submissionDate.label_tag }} {{ form.submissionDate }}
+    {{ form.proposalCost.label_tag }} {{ form.proposalCost }}
+    {{ form.docControlIndex.label_tag }} {{ form.docControlIndex }}
 
-  {{form.as_p}} 
- 
+    <!-- Accepted Checkbox -->
+    <label for="id_accepted">{{ form.accepted.label }}</label>
+    {{ form.accepted }}
+  </div>
+
+  <!-- Check if accepted is true in the instance -->
+  {% if form.instance.accepted %}
+  <div id="accepted-info" class="form-group">
+    <div class="form-group">
+      {{ form.acceptedDate.label_tag }} {{ form.acceptedDate }}
+    </div>
+
+    <div class="form-group">
+      {{ form.workOrderNo.label_tag }} {{ form.workOrderNo }}
+    </div>
+
+    <div class="form-group">
+      {{ form.workOrderDate.label_tag }} {{ form.workOrderDate }}
+    </div>
+
+    <div class="form-group">
+      {{ form.workOrderCost.label_tag }} {{ form.workOrderCost }}
+    </div>
+  </div>
+  {% endif %}
+
   <button type="submit" class="btn btn-primary">Save changes</button>
-  <a href="{% url 'ppList' id %}">
+  <a href="{% url 'ppList' projectLead.id %}">
     <button type="button" class="btn btn-secondary">Cancel</button>
-</a>
-   
+  </a>
 </form>
 {% endblock %}

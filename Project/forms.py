@@ -81,6 +81,13 @@ class ProjectProposalForm(forms.ModelForm):
 
         self.apply_bootstrap()
 
+        # Check if accepted is in initial data to decide if the additional fields should be included
+        if self.instance and self.instance.accepted:
+            self.fields['acceptedDate'].required = True
+            self.fields['workOrderNo'].required = True
+            self.fields['workOrderDate'].required = True
+            self.fields['workOrderCost'].required = True
+
     class Meta:
         model = ProjectProposal
         fields = '__all__'
@@ -94,6 +101,7 @@ class ProjectProposalForm(forms.ModelForm):
     def apply_bootstrap(self):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+
 
 class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
