@@ -7,4 +7,35 @@
         <button type="submit" class="btn btn-primary">Save changes</button>
         <a href="{% url 'submissionsList' %}" class="btn btn-secondary">Cancel</a>
     </form>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Initialize Select2 for the dciItems field
+            $('#id_dciItems').select2({
+                placeholder: 'Select DCI Items',
+                allowClear: true
+            });
+
+            // Move selected items to the top
+            $('#id_dciItems').on('select2:select', function (e) {
+                var selectedData = $(this).val();
+                if (selectedData) {
+                    var sortedItems = selectedData.sort();
+                    $(this).val(sortedItems).trigger('change');
+                }
+            });
+
+            // Remove selected items from the dropdown
+            $('#id_dciItems').on('select2:unselect', function (e) {
+                var removedData = e.params.data.id;
+                var selectedData = $(this).val();
+                var newSelection = selectedData.filter(item => item !== removedData);
+                $(this).val(newSelection).trigger('change');
+            });
+        });
+    </script>
 {% endblock %}

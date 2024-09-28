@@ -1,7 +1,7 @@
 {% extends "registration/base.html" %}
 {% block content %}
 <form method="POST" enctype="multipart/form-data" autocomplete="off">
-    <h3>Add New Task for {{project}}</h3>
+    <h3>Add New Task for {{ project }}</h3>
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Save changes</button>
@@ -9,4 +9,37 @@
         <button type="button" class="btn btn-secondary">Cancel</button>
     </a>
 </form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+<script type="text/javascript">
+    // Initialize Select2 for DCIItem field
+    $(document).ready(function() {
+        $('#id_dciItem').select2({
+            placeholder: 'Select DCI Items',
+            allowClear: true
+        });
+
+        // Function to move selected items to the top
+        $('#id_dciItem').on('select2:select', function (e) {
+            var selectedData = $(this).val();
+            if (selectedData) {
+                // Sort selected items and move them to the top
+                var sortedItems = selectedData.sort();
+                $(this).val(sortedItems).trigger('change');
+            }
+        });
+
+        // Function to remove selected items from the dropdown
+        $('#id_dciItem').on('select2:unselect', function (e) {
+            var removedData = e.params.data.id;
+            var selectedData = $(this).val();
+            var newSelection = selectedData.filter(item => item !== removedData);
+            $(this).val(newSelection).trigger('change');
+        });
+    });
+</script>
+
 {% endblock %}

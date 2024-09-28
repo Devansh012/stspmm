@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from Project.models import Project, Staff 
-from DCI.models import DCIItem
+from DCI.models import DCIItem,DCIGroup
 class Tasks(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
-    # dciItem = models.OneToOneField('DCI.DCIItem', on_delete=models.CASCADE, blank=True, null=True)
+    dciItem = models.ManyToManyField('DCI.DCIItem', blank=True, null=True)
     taskName = models.CharField(max_length=30, null=True, blank=True,verbose_name='Task Name')
     taskDescription = models.TextField(blank=True, null=True)
     assignedTo = models.ForeignKey(Staff, on_delete=models.CASCADE, max_length=30, blank=True, null=True)

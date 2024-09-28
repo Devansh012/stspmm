@@ -1,7 +1,6 @@
 from django import forms
 from .models import Submissions, DocumentSubmissionAgency, DocumentSubmissionAgencyType
 
-# Helper function to apply 'form-control' class to all form fields
 def apply_form_control(fields):
     for field in fields.values():
         if field.widget.attrs.get('class'):
@@ -19,17 +18,18 @@ class SubmissionsForm(forms.ModelForm):
             'printingDate': forms.DateInput(attrs={'type': 'date'}),
             'submissionDate': forms.DateInput(attrs={'type': 'date'}),
             'approvalDate': forms.DateInput(attrs={'type': 'date'}),
+            'dciItems': forms.SelectMultiple(attrs={'class': 'form-control'}),  # Use SelectMultiple widget for dciItems
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Apply form-control class to all fields
         apply_form_control(self.fields)
-        # Restrict file types to PDF and Word documents for the commentDocument field
+        # Restrict file types for document uploads
         self.fields['commentDocument'].widget.attrs.update({'accept': '.pdf,.doc,.docx'})
-        # Restrict file types to PDF and Word documents for the replyDocument field
         self.fields['replyDocument'].widget.attrs.update({'accept': '.pdf,.doc,.docx'})
 
+        
 # DocumentSubmissionAgency Form
 class DocumentSubmissionAgencyForm(forms.ModelForm):
     class Meta:

@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect
-from .models import Tasks, TaskActivities, Hinderances, HinderanceFollowUp, Project
+from .models import Tasks, TaskActivities, Hinderances, HinderanceFollowUp, Project, DCIItem, DCIGroup
 from .forms import (
     TasksForm,
     TaskActivitiesForm,
@@ -10,44 +10,71 @@ from .forms import (
 from django.http import FileResponse
 
 
-def tasksList(request,id):
-    tasks = Tasks.objects.filter(project = id)
+def tasksList(request, id):
     project = get_object_or_404(Project, id=id)
-    context = {"tasks":tasks,"project":project,"id":id}
-    return render(request,"tasks/tasksList.html", context)
+    tasks = Tasks.objects.filter(project=project)
+
+    context = {
+        'tasks': tasks,
+        'project': project,
+        'id': id
+    }
+    return render(request, "tasks/tasksList.html", context)
+
 
 
 def tasksCreateView(request, id):
     project = get_object_or_404(Project, id=id)
+    
+    # Assuming project.finalDCI is a DCI instance
+    dci_groups = DCIGroup.objects.filter(dci=project.finalDCI)  # Get all DCI Groups related to the DCI
+    dci_items = DCIItem.objects.filter(dciGroup__in=dci_groups)  # Corrected: use dciGroup
+
     form = TasksForm(request.POST or None, project=project)
     
     if form.is_valid():
         tasks = form.save(commit=False)
         tasks.project = project  # Ensure project is set
         tasks.save()
+
+        # Now save the selected DCI items
+        form.save_m2m()  # This line saves the many-to-many relationship
+        
         return redirect("tasksList", id=id)
     
     context = {
         "form": form,
         "id": id,
         "project": project,
+        "dci_items": dci_items,  # Pass the filtered DCI Items to the template if needed
     }
 
     return render(request, "tasks/tasksCreateView.html", context)
 
 
 def tasksUpdateView(request, id):
-    obj = get_object_or_404(Tasks, id=id)
-    project = obj.project
-    form = TasksForm(request.POST or None, request.FILES or None, instance=obj, project=project)
-    
-    if form.is_valid():
-        form.save()
-        return redirect("tasksList", id=project.id)
-    
+    obj = get_object_or_404(Tasks, id=id)  # Fetch the task based on id
+    project = obj.project  # Get the project from the task
+    task = get_object_or_404(Tasks, id=id)
+
+    if request.method == "POST":
+        form = TasksForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            # Redirect to your tasks list page or wherever needed
+            return redirect("tasksList", id=project.id) 
+    else:
+        form = TasksForm(instance=task)
+
+    # Assuming you want to get the DCIItems associated with the task
+    dci_groups = DCIGroup.objects.filter(dci=task.project.finalDCI)
+    dci_items = DCIItem.objects.filter(dciGroup__in=dci_groups)
+
     context = {
-        "form": form,
-        "project": project,
+        'form': form,
+        'task': task,
+        'dci_items': dci_items,  # Pass DCI items to the template if needed
+        'project': project
     }
     return render(request, "tasks/tasksUpdateView.html", context)
 
@@ -65,6 +92,15 @@ def tasksDeleteView(request, id):
         return HttpResponseRedirect("/tasks/tasksList")
     return render(request, "tasks/tasksDeleteView.html", context2)
 
+def task_dci_item_view(request, task_id):
+    task = get_object_or_404(Tasks, id=task_id)
+    dci_items = task.dciItem.all()  # Assuming dciItem is a ManyToManyField or ForeignKey
+    
+    context = {
+        'task': task,
+        'dci_items': dci_items,
+    }
+    return render(request, 'tasks/task_dci_items.html', context)
 
 def taskActivitiesList(request, id):
     task = get_object_or_404(Tasks, id=id)

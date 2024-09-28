@@ -1,5 +1,6 @@
 from django import forms
-from .models import Tasks, TaskActivities, Hinderances, HinderanceFollowUp
+from .models import Tasks, DCIItem, DCIGroup, TaskActivities, Hinderances,HinderanceFollowUp
+from django_select2.forms import Select2MultipleWidget
 
 # Helper function to apply 'form-control' class to all form fields
 def apply_form_control(fields):
@@ -9,22 +10,31 @@ def apply_form_control(fields):
         else:
             field.widget.attrs['class'] = 'form-control'
 
-# Tasks Form
 class TasksForm(forms.ModelForm):
     class Meta:
         model = Tasks
-        fields = '__all__'
+        fields = ['project', 'dciItem', 'taskName', 'taskDescription', 'assignedTo', 'completed', 'targetDateOfCompletion']
+        widgets = {
+            'dciItem': Select2MultipleWidget(attrs={'class': 'form-control'}),  # Using Select2 for multi-select dropdown
+        }
 
     def __init__(self, *args, **kwargs):
-        project = kwargs.pop('project', None)  # Remove the project from kwargs if passed
+        project = kwargs.pop('project', None)
         super().__init__(*args, **kwargs)
-        # Apply form-control class to all fields
         apply_form_control(self.fields)
-        
-        if project:  # If a project is provided
-            self.fields['project'].initial = project  # Set the initial value for the project field
-            self.fields['project'].widget.attrs['readonly'] = True  # Disable the project field
+
+        if project:
+            self.fields['project'].initial = project
+            self.fields['project'].widget.attrs['readonly'] = True
             self.fields['project'].widget.attrs['disabled'] = 'disabled'
+
+            # Filter DCIItems based on the DCI
+            dci_groups = DCIGroup.objects.filter(dci=project.finalDCI)
+            self.fields['dciItem'].queryset = DCIItem.objects.filter(dciGroup__in=dci_groups)
+
+
+
+
 
 # Task Activities Form
 class TaskActivitiesForm(forms.ModelForm):

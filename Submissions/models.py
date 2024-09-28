@@ -16,7 +16,7 @@ class Submissions(models.Model):
     submittedTo = models.ForeignKey('DocumentSubmissionAgency', on_delete=models.CASCADE, blank=True, null=True)
     submissionDate = models.DateField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    dciItems = models.ForeignKey(DCIItem, on_delete=models.CASCADE, blank=True, null=True)
+    dciItems = models.ManyToManyField(DCIItem, blank=True, null=True)
     documents = models.ForeignKey(Document, on_delete=models.CASCADE, blank=True, null=True)
     earlierSubmissionReference = models.CharField(max_length=30, blank=True, null=True)
     commentIfAny = models.TextField(blank=True, null=True)

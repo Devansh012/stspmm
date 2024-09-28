@@ -29,6 +29,7 @@ class DCIItem(models.Model):
     weightage = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     associatedCost = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     dciGroup = models.ForeignKey('DCIGroup', on_delete=models.CASCADE, blank=True, null=True)
+    dci = models.ForeignKey('DCI', on_delete=models.CASCADE, blank=True,null=True)
     createdBy = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     createdDate = models.DateField(auto_now_add=True,blank=True, null=True)
 

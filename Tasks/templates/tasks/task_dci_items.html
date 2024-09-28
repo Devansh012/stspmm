@@ -1,0 +1,33 @@
+{% extends "registration/base.html" %}
+{% block content %}
+    <h2>DCI Items for Task: {{ task.taskName }}</h2>
+    
+    <a href="{% url 'tasksList' task.project.id %}" style="text-decoration: none;">
+        <button type="button" class="btn btn-secondary btn-sm">
+            <span style="font-size: 1.2em;">&#8592; Back</span>
+        </button>
+    </a>
+
+    <table class="table table-striped table-hover mt-4">
+        <thead>
+            <tr>
+                <th class="text-start border">Index</th>
+                <th class="text-start border">DCI Item</th>
+                <th class="text-start border">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in dci_items %}
+            <tr>
+                <td class="text-start border">{{ forloop.counter }}</td>
+                <td class="text-start border">{{ item.name }}</td>
+                <td class="text-start border">{{ item.description }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No DCI items available for this task.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

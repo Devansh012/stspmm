@@ -103,7 +103,7 @@ class Project(models.Model):
     workOrderNo =  models.CharField(max_length=25,blank=True,null=True,verbose_name='Work Order Number')
     workOrderDate = models.DateField(blank=True,null=True,verbose_name='Work Order Date')
     file = models.FileField(blank=True,null=True,verbose_name='File')
-    # finalDCI = models.OneToOneField(DCI, on_delete=models.CASCADE, blank=True, null=True)
+    finalDCI = models.ForeignKey(DCI, on_delete=models.CASCADE, blank=True, null=True)
     # documents = models.ForeignKey('docs.Document', on_delete=models.CASCADE, blank=True, null=True)
     def __str__(self):
         return self.projectName if self.projectName else "Unnamed Project"

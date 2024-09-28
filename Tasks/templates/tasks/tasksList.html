@@ -1,26 +1,27 @@
 {% extends "registration/base.html" %}
 {% block content %}
-    <h2>Tasks List for {{project}}</h2>
+    <h2>Tasks List for {{ project }}</h2>
 
     <a href="{% url 'projectList' %}" style="text-decoration: none;">
         <button type="button" class="btn btn-secondary btn-sm">
-          <span style="font-size: 1.2em;">&#8592; Back</span>
+            <span style="font-size: 1.2em;">&#8592; Back</span>
         </button>
-      </a>
+    </a>
 
-    <a href="{% url 'tasksCreateView' id %}">
+    <a href="{% url 'tasksCreateView' project.id %}">
         <button type="button" class="btn btn-primary btn-sm" style="float:right;"> Add New
         </button>
     </a>
 
-    <table  class="table table-striped table-hover mt-4">
+    <table class="table table-striped table-hover mt-4">
         <thead>
             <tr>
                 <th class="text-start border">Task Name</th>
                 <th class="text-start border">Assigned To</th>
                 <th class="text-start border">Assignment Date</th>
+                <th class="text-start border">DCI Item</th>
                 <th class="text-start border">Target Date Of Completion</th>
-                <th class="text-start border">Project Name</th>  <!-- Added Project Name column -->
+                <th class="text-start border">Project Name</th> <!-- Added Project Name column -->
                 <th class="text-end border">Task Activities</th>
                 <th class="text-end border">Actions</th>
             </tr>
@@ -31,6 +32,13 @@
                 <td class="text-start border">{{ tk.taskName }}</td>
                 <td class="text-start border">{{ tk.assignedTo }}</td>               
                 <td class="text-start border">{{ tk.assignmentDate }}</td>
+                <td class="text-start border">
+                    {% if tk.dciItem.exists %}
+                        <a href="{% url 'taskDCIItemView' tk.id %}" style="text-decoration: underline; color: #007bff;">DCI Items</a>
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
                 <td class="text-start border">{{ tk.targetDateOfCompletion }}</td>
                 <td class="text-start border">{{ tk.project }}</td> <!-- Displaying Project Name -->
                 <td class="text-end border">

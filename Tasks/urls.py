@@ -6,6 +6,7 @@ urlpatterns = [
     path('tasksCreateView/<int:id>/', views.tasksCreateView, name="tasksCreateView"),
     path('tasksUpdateView/<int:id>/', views.tasksUpdateView, name="tasksUpdateView"),
     path('tasksDeleteView/<int:id>/', views.tasksDeleteView, name="tasksDeleteView"),
+    path('tasks/<int:task_id>/dci-items/', views.task_dci_item_view, name='taskDCIItemView'),
 
     path('taskActivitiesList/<int:id>', views.taskActivitiesList, name='taskActivitiesList'),
     path('taskActivitiesCreateView/<int:id>', views.taskActivitiesCreateView, name='taskActivitiesCreateView'),
