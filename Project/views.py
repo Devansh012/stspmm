@@ -64,14 +64,23 @@ def scopeGroupCreateView(request):
     return render(request, "project/scopeGroupCreateView.html", {"form": form})
 
 
-
 def scopeGroupUpdateView(request, id):
     obj = get_object_or_404(ScopeGroup, id=id)
-    form = ScopeGroupForm(request.POST or None, instance=obj)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        return HttpResponse(status=204, headers={"HX-Trigger": "scopeGroupListChanged"})
-    return render(request, "project/scopeGroupUpdateView.html", {"form": form, "scopeGroup": obj})
+    
+    if request.method == "POST":
+        form = ScopeGroupForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            # HTMX success response, triggers update of the scope group list on the client
+            return HttpResponse(status=204, headers={"HX-Trigger": "scopeGroupListChanged"})
+        else:
+            return HttpResponseBadRequest("Invalid form data")
+    
+    # For GET requests (loading the form into the modal)
+    else:
+        form = ScopeGroupForm(instance=obj)
+        return render(request, "project/scopeGroupUpdateView.html", {"form": form, "scopeGroup": obj})
+
 
 
 def scopeGroupDeleteView(request, id):
@@ -97,7 +106,7 @@ def scopeItemListHTMX(request, id):
 def scopeItemCreateView(request, id):
     scopeGroup = get_object_or_404(ScopeGroup, id=id)
     form = ScopeItemForm(request.POST or None, request.FILES or None)
-    
+
     if form.is_valid():
         scopeItem = form.save(commit=False)
         scopeItem.scopeGroup = scopeGroup
@@ -107,26 +116,30 @@ def scopeItemCreateView(request, id):
     context = {
         'form': form,
         'scopeGroup': scopeGroup,
-        'id': id
-
+        'id': id,
     }
     return render(request, 'project/scopeItemCreateView.html', context)
+
 
 
 def scopeItemUpdateView(request, id):
     obj = get_object_or_404(ScopeItem, id=id)
     scopeGroup = obj.scopeGroup
-    context1 = {"scopeGroup": scopeGroup}
+    
     if request.method == "POST":
-        form = ScopeItemForm(request.POST or None, request.FILES or None, instance=obj, parent_scopeGroup=scopeGroup)
+        form = ScopeItemForm(request.POST or None, request.FILES or None, instance=obj)
         if form.is_valid():
             form.save()
-            return redirect("scopeItemList", id=scopeGroup.id)  # Use named URL pattern
+            return redirect("scopeItemListHTMX", id=scopeGroup.id)
     else:
-        form = ScopeItemForm(instance=obj, parent_scopeGroup=scopeGroup)
+        form = ScopeItemForm(instance=obj)
 
-    context1["form"] = form
-    return render(request, "project/scopeItemUpdateView.html", context1)
+    context = {
+        "form": form,
+        "scopeGroup": scopeGroup,
+        "id":id,
+    }
+    return render(request, "project/scopeItemUpdateView.html", context)
 
 
 

@@ -28,7 +28,7 @@
         </thead>
         <tbody>
             {% for tk in tasks %}
-            <tr>
+            <tr hx-get="{% url 'load_task_activities' tk.id %}" hx-trigger="click" hx-target="#task-activities-{{ tk.id }}" hx-swap="outerHTML">
                 <td class="text-start border">{{ tk.taskName }}</td>
                 <td class="text-start border">{{ tk.assignedTo }}</td>               
                 <td class="text-start border">{{ tk.assignmentDate }}</td>
@@ -40,9 +40,9 @@
                     {% endif %}
                 </td>
                 <td class="text-start border">{{ tk.targetDateOfCompletion }}</td>
-                <td class="text-start border">{{ tk.project }}</td> <!-- Displaying Project Name -->
+                <td class="text-start border">{{ tk.project }}</td>
                 <td class="text-end border">
-                    <a href="{% url 'taskActivitiesList' tk.id %}" class="mx-5" title="View Task Activities"><i class="fas fa-tasks" aria-hidden="true"></i></a>
+                    <i class="fas fa-caret-down" aria-hidden="true"></i>
                 </td>
                 <td class="text-end border">
                     <a href="{% url 'tasksUpdateView' tk.id %}" title="Edit Task"><i class="fas fa-edit" aria-hidden="true"></i></a>
@@ -60,6 +60,9 @@
                         });
                     </script>
                 </td>
+            </tr>
+            <tr id="task-activities-{{ tk.id }}">
+                <!-- Task activities will be loaded here dynamically by HTMX -->
             </tr>
             {% endfor %}
         </tbody>

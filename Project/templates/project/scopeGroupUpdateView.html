@@ -1,9 +1,9 @@
 <h5 class="modal-title">Update Scope Group</h5>
-<div class="modal-body">
-    <form method="post" hx-post="{% url 'scopeGroupUpdateView' %}" hx-target="#scope-group-list" hx-swap="outerHTML" hx-on="htmx:afterRequest: $('#form-modal').modal('hide')">
+<div class="modal-body" id="modal-body-content">
+    <form method="post" hx-post="{% url 'scopeGroupUpdateView' scopeGroup.id %}" hx-target="#scope-group-list" hx-swap="outerHTML">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Save changes</button>
-        <a href="#" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
     </form>
 </div>

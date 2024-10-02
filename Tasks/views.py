@@ -102,6 +102,11 @@ def task_dci_item_view(request, task_id):
     }
     return render(request, 'tasks/task_dci_items.html', context)
 
+def load_task_activities(request, task_id):
+    task = get_object_or_404(Tasks, id=task_id)
+    task_activities = TaskActivities.objects.filter(task=task)
+    return render(request, 'tasks/task_activities_partial.html', {'task_activities': task_activities, 'task': task})
+
 def taskActivitiesList(request, id):
     task = get_object_or_404(Tasks, id=id)
     taskActivities = TaskActivities.objects.filter(task_id=id)
@@ -123,7 +128,7 @@ def taskActivitiesCreateView(request, id):
             task_activities = form.save(commit=False)
             task_activities.task = task
             task_activities.save()
-            return redirect("taskActivitiesList", id=id)
+            return redirect("tasksList", id=id)
     else:
         form = TaskActivitiesForm(user=request.user)
     context = {"form": form, "task": task}
@@ -136,7 +141,7 @@ def taskActivitiesUpdateView(request, id):
         form = TaskActivitiesForm(request.POST or None, request.FILES or None, instance=task_activity, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect("taskActivitiesList", id=task.id)
+            return redirect("tasksList", id=task.id)
     else:
         form = TaskActivitiesForm(instance=task_activity, user=request.user)
     context = {"form": form, "task": task}
@@ -147,7 +152,7 @@ def taskActivitiesDeleteView(request, id):
     task = task_activity.task
     if request.method == "POST":
         task_activity.delete()
-        return redirect("taskActivitiesList", id=task.id)
+        return redirect("tasksList", id=task.id)
     context = {"task_activity": task_activity, "task": task}
     return render(request, "tasks/taskActivitiesDeleteView.html", context)
 

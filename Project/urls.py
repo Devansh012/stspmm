@@ -10,7 +10,7 @@ urlpatterns = [
 
     path('scopeGroupList/', views.scopeGroupList, name='scopeGroupList'),
     path('scopeGroupCreateView/', views.scopeGroupCreateView, name='scopeGroupCreateView'),
-    path('scopeGroupUpdateView/<id>', views.scopeGroupUpdateView, name='scopeGroupUpdateView'),
+    path('scopeGroupUpdateView/<int:id>', views.scopeGroupUpdateView, name='scopeGroupUpdateView'),
     path('scopeGroupDeleteView/<id>', views.scopeGroupDeleteView, name='scopeGroupDeleteView'),
     
     path('scopeItemListHTMX/<int:id>/', views.scopeItemListHTMX, name='scopeItemListHTMX'),

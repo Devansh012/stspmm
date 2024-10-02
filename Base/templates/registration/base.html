@@ -184,19 +184,36 @@
         document.getElementById('modal-body').innerHTML = '';
       });
     </script>
-    <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="modalLabel">Form</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body" id="modal-body-content">
-                  <!-- HTMX will load form content here -->
-              </div>
-          </div>
+    <!-- Modal -->
+<div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Form</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <div class="modal-body" id="modal-body-content">
+        <!-- The form content will be injected here by HTMX -->
+      </div>
+    </div>
   </div>
+</div>
+<script>
+  // Close the modal after HTMX request
+  function closeModal() {
+      var modal = new bootstrap.Modal(document.getElementById('form-modal'));
+      modal.hide();
+  }
+
+  // Open the modal once the content is loaded via HTMX
+  document.addEventListener('htmx:afterSwap', function(event) {
+      if (event.detail.target.id === 'modal-body-content') {
+          var modal = new bootstrap.Modal(document.getElementById('form-modal'));
+          modal.show();
+      }
+  });
+</script>
+
   <script>
     document.addEventListener('htmx:afterRequest', (event) => {
         $('#form-modal').modal('hide');

@@ -1,21 +1,47 @@
-# forms.py
 from django import forms
-from .models import Sector,ScopeGroup, ScopeItem, Client, Staff, ContactPerson, ProjectLead, ProjectProposal, Project,  DCI
+from .models import Sector, ScopeGroup, ScopeItem, Client, Staff, ContactPerson, ProjectLead, ProjectProposal, Project, DCI
 
 class ContactPersonForm(forms.ModelForm):
     class Meta:
         model = ContactPerson
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_bootstrap()
+
+    def apply_bootstrap(self):
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
+
 class SectorForm(forms.ModelForm):
     class Meta:
         model = Sector
         fields = ['sectorName']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_bootstrap()
+
+    def apply_bootstrap(self):
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
+
 class ScopeGroupForm(forms.ModelForm):
     class Meta:
         model = ScopeGroup
         fields = ['name', 'description']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_bootstrap()
+
+    def apply_bootstrap(self):
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
 
 class ScopeItemForm(forms.ModelForm):
     class Meta:
@@ -31,10 +57,20 @@ class ScopeItemForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
 
+
 class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ['name', 'address', 'email', 'mobile']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_bootstrap()
+
+    def apply_bootstrap(self):
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
 
 class StaffForm(forms.ModelForm):
     class Meta:
@@ -53,10 +89,11 @@ class StaffForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
 
+
 class ProjectLeadForm(forms.ModelForm):
     class Meta:
         model = ProjectLead
-        fields = ['projectName', 'cost', 'agency', 'scopeItem', 'description','approved', 'source', 'sourceDescription']
+        fields = ['projectName', 'cost', 'agency', 'scopeItem', 'description', 'approved', 'source', 'sourceDescription']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,6 +102,7 @@ class ProjectLeadForm(forms.ModelForm):
     def apply_bootstrap(self):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+
 
 class ProjectProposalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -81,7 +119,6 @@ class ProjectProposalForm(forms.ModelForm):
 
         self.apply_bootstrap()
 
-        # Check if accepted is in initial data to decide if the additional fields should be included
         if self.instance and self.instance.accepted:
             self.fields['acceptedDate'].required = True
             self.fields['workOrderNo'].required = True
@@ -126,4 +163,3 @@ class ProjectForm(forms.ModelForm):
     def apply_bootstrap(self):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
-

@@ -1,0 +1,48 @@
+<tr id="task-activities-{{ task.id }}">
+    <td colspan="8">
+        <h5>Task Activities for {{ task.taskName }}</h5>
+
+        <!-- Add New Button next to the heading -->
+        <a href="{% url 'taskActivitiesCreateView' task.id %}" class="btn btn-primary btn-sm mb-2" style="float:right;" title="Add New Task Activity">
+            Add New
+        </a>
+
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Date Of Entry</th>
+                    <th>Completion Date</th>
+                    <th>Entry Done By</th>
+                    <th>Activity Name</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ta in task_activities %}
+                <tr>
+                    <td>{{ ta.dateOfEntry }}</td>
+                    <td>{{ ta.completionDate }}</td>
+                    <td>{{ ta.entryDoneBy }}</td>
+                    <td>{{ ta.activityName }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'taskActivitiesUpdateView' ta.id %}" title="Edit Task Activity"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                        <form action="{% url 'taskActivitiesDeleteView' ta.id %}" method="post" style="display:inline;" id="delete-form-{{ ta.id }}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Task Activity">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                        <script>
+                            document.querySelector('#delete-form-{{ ta.id }}').addEventListener('submit', function (event) {
+                                if (!confirm('Are you sure you want to delete this item "{{ ta.activityName }}"?')) {
+                                    event.preventDefault(); // Prevent form submission if the user cancels
+                                }
+                            });
+                        </script>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </td>
+</tr>

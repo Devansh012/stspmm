@@ -22,11 +22,13 @@
                     </thead>
                     <tbody>
                         {% for sg in scopeGroups %}
-                            <tr hx-get="{% url 'scopeItemListHTMX' sg.id %}" hx-target="#scope-item-list" hx-swap="innerHTML">
+                            <tr hx-get="{% url 'scopeItemListHTMX' sg.id %}" 
+                                hx-target="#scope-item-list" 
+                                hx-swap="innerHTML" 
+                                hx-on="htmx:afterSettle: updateAddButton('{{ sg.id }}', '{{ sg.name }}')">
                                 <td class="text-start">{{ sg.name }}</td>
                                 <td class="text-end">
-                                    <a 
-                                       hx-get="{% url 'scopeGroupUpdateView' sg.id %}" 
+                                    <a hx-get="{% url 'scopeGroupUpdateView' sg.id %}" 
                                        hx-target="#modal-body-content" 
                                        hx-trigger="click" 
                                        hx-swap="innerHTML" 
@@ -35,9 +37,14 @@
                                        title="Edit Scope Group">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{% url 'scopeGroupDeleteView' sg.id %}" method="post" style="display:inline;" id="delete-form-{{ sg.id }}">
+                                    <form action="{% url 'scopeGroupDeleteView' sg.id %}" 
+                                          method="post" 
+                                          style="display:inline;" 
+                                          id="delete-form-{{ sg.id }}">
                                         {% csrf_token %}
-                                        <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete ScopeGroup">
+                                        <button type="submit" 
+                                                style="background: none; border: none; cursor: pointer;" 
+                                                title="Delete ScopeGroup">
                                             <i class="fas fa-trash" aria-hidden="true"></i>
                                         </button>
                                     </form>
@@ -60,19 +67,25 @@
         <div class="col-md-6">
             <h2>Scope Items</h2>
             <a 
-               href="{% if scopeGroups %}{% url 'scopeItemCreateView' scopeGroups.0.id %}{% else %}#{% endif %}" 
-               hx-get="{% if scopeGroups %}{% url 'scopeItemCreateView' scopeGroups.0.id %}{% endif %}" 
-               hx-target="#modal-body-content" 
-               hx-swap="innerHTML" 
+               id="add-scope-item-btn" 
+               class="btn btn-primary mb-3"
                data-bs-toggle="modal" 
-               data-bs-target="#form-modal" 
-               class="btn btn-primary mb-3" 
-               id="add-scope-item-btn">
-                {% if scopeGroups %}Add New{% else %}Select a Scope Group{% endif %}
+               data-bs-target="#form-modal">
+               Select a Scope Group
             </a>
             <div id="scope-item-list">
                 <p>Select a scope group to see its items</p>
             </div>
         </div>
     </div>
+
+    <script>
+        // JavaScript function to update the 'Add New' button when a scope group is selected
+        function updateAddButton(scopeGroupId, scopeGroupName) {
+            const addButton = document.getElementById('add-scope-item-btn');
+            addButton.setAttribute('hx-get', `/project/scopeItemCreateView/${scopeGroupId}/`);
+            addButton.innerHTML = `Add New Item to ${scopeGroupName}`;
+            addButton.removeAttribute('disabled');
+        }
+    </script>
 {% endblock %}
