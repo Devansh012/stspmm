@@ -7,7 +7,8 @@ from .forms import (
     HinderanceFollowUpForm,
 )
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
+from django.template.loader import render_to_string
 
 
 def tasksList(request, id):
@@ -122,30 +123,47 @@ def taskActivitiesList(request, id):
 
 def taskActivitiesCreateView(request, id):
     task = get_object_or_404(Tasks, id=id)
+
     if request.method == "POST":
-        form = TaskActivitiesForm(request.POST or None, request.FILES or None, user=request.user)
+        form = TaskActivitiesForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            task_activities = form.save(commit=False)
-            task_activities.task = task
-            task_activities.save()
+            task_activity = form.save(commit=False)
+            task_activity.task = task
+            task_activity.save()
+
+            if request.headers.get('Hx-Request'):  # HTMX request
+                task_activities_list = TaskActivities.objects.filter(task=task)
+                return render(request, 'tasks/task_activities_partial.html', {
+                    'task_activities': task_activities_list,
+                    'task': task
+                })
+
             return redirect("tasksList", id=id)
+
     else:
         form = TaskActivitiesForm(user=request.user)
-    context = {"form": form, "task": task}
-    return render(request, "tasks/taskActivitiesCreateView.html", context)
+
+    if request.headers.get('Hx-Request'):  # HTMX request
+        return render(request, 'tasks/taskActivitiesCreateView.html', {'form': form, 'task': task})
+
+    return render(request, "tasks/taskActivitiesCreateView.html", {"form": form, "task": task})
+
+
 
 def taskActivitiesUpdateView(request, id):
     task_activity = get_object_or_404(TaskActivities, id=id)
-    task = task_activity.task
     if request.method == "POST":
-        form = TaskActivitiesForm(request.POST or None, request.FILES or None, instance=task_activity, user=request.user)
+        form = TaskActivitiesForm(request.POST, instance=task_activity)
         if form.is_valid():
             form.save()
-            return redirect("tasksList", id=task.id)
+            # Return updated list or modal response via HTMX
+            return HttpResponse("Task activity updated")
     else:
-        form = TaskActivitiesForm(instance=task_activity, user=request.user)
-    context = {"form": form, "task": task}
-    return render(request, "tasks/taskActivitiesUpdateView.html", context)
+        form = TaskActivitiesForm(instance=task_activity)
+
+    return render(request, 'tasks/taskActivitiesUpdateView.html', {'form': form, 'task_activity': task_activity})
+
+
 
 def taskActivitiesDeleteView(request, id):
     task_activity = get_object_or_404(TaskActivities, id=id)

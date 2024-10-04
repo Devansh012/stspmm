@@ -3,9 +3,23 @@
         <h5>Task Activities for {{ task.taskName }}</h5>
 
         <!-- Add New Button next to the heading -->
-        <a href="{% url 'taskActivitiesCreateView' task.id %}" class="btn btn-primary btn-sm mb-2" style="float:right;" title="Add New Task Activity">
+        <a href="{% url 'taskActivitiesCreateView' task.id %}" hx-get="{% url 'taskActivitiesCreateView' task.id %}" hx-target="#modal-body" hx-swap="innerHTML" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
             Add New
         </a>
+
+        {% comment %} <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="formModalLabel">Manage Task Activity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <!-- Form will be loaded here by HTMX -->
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
 
         <table class="table table-bordered mt-3">
             <thead>
@@ -25,8 +39,10 @@
                     <td>{{ ta.entryDoneBy }}</td>
                     <td>{{ ta.activityName }}</td>
                     <td class="text-end">
-                        <a href="{% url 'taskActivitiesUpdateView' ta.id %}" title="Edit Task Activity"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                        <form action="{% url 'taskActivitiesDeleteView' ta.id %}" method="post" style="display:inline;" id="delete-form-{{ ta.id }}">
+                        <a href="{% url 'taskActivitiesUpdateView' ta.id %}" hx-get="{% url 'taskActivitiesUpdateView' ta.id %}" hx-target="#modal-body" hx-swap="innerHTML" data-bs-toggle="modal" data-bs-target="#formModal">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                        </a>
+                            <form action="{% url 'taskActivitiesDeleteView' ta.id %}" method="post" style="display:inline;" id="delete-form-{{ ta.id }}">
                             {% csrf_token %}
                             <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Task Activity">
                                 <i class="fas fa-trash" aria-hidden="true"></i>
