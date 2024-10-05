@@ -75,10 +75,10 @@ class ProjectLead(models.Model):
  
 class ProjectProposal(models.Model):
     projectLead = models.ForeignKey(ProjectLead, on_delete=models.CASCADE, blank=True, null=True)
-    submittedTo = models.ForeignKey(Client,on_delete=models.CASCADE,blank=True,null=True)
+    submittedTo = models.ForeignKey(Client,on_delete=models.CASCADE)
     submissionDate = models.DateField(blank=True, null=True)
     proposalCost = models.DecimalField(max_digits=15, decimal_places=2,blank=True, null=True)
-    docControlIndex = models.OneToOneField(DCI, blank=True, null=True, on_delete=models.CASCADE)
+    docControlIndex = models.OneToOneField(DCI,on_delete=models.CASCADE)
     accepted = models.BooleanField(default=False, blank=True, null=True)
     acceptedDate = models.DateField(blank=True, null=True)
     workOrderNo = models.CharField(max_length=15, blank=True, null=True)
