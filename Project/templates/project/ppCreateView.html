@@ -7,6 +7,7 @@
   
   <!-- First Div with submissionDate, proposalCost, and docControlIndex -->
   <div id="basic-info" class="form-group">
+    {{ form.submittedTo.label_tag }} {{ form.submittedTo }}
     {{ form.submissionDate.label_tag }} {{ form.submissionDate }}
     {{ form.proposalCost.label_tag }} {{ form.proposalCost }}
     {{ form.docControlIndex.label_tag }} {{ form.docControlIndex }}

@@ -337,7 +337,8 @@ def ppCreateView(request, id):
         projectProposal = form.save(commit=False)
         projectProposal.projectLead = projectLead
         projectProposal.save()
-        return redirect('ppList', id=id)  # Updated redirect
+        return redirect('ppList', id=id)
+    
     context = {
         "form": form,
         "id": id,

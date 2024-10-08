@@ -1,0 +1,50 @@
+{% extends 'registration/base.html' %}
+{% block content %}
+<a href="{% url 'dciList'  %}" style="text-decoration: none;">
+    <button type="button" class="btn btn-secondary btn-sm">
+        <span style="font-size: 1.2em;">&#8592; Back</span>
+    </button>
+</a>
+  <h2>{{ dci.name }}: Groups & Items</h2>
+
+  
+
+  <h3>DCI Groups</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Group Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for group in dci_groups %}
+        <tr>
+          <td>{{ group.name }}</td>
+          <td>{{ group.description }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>DCI Items</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Item Code</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in dci_items %}
+        <tr>
+          <td>{{ item.itemCode }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

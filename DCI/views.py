@@ -246,6 +246,16 @@ def dciItemDeleteView(request, id):
     return render(request, "dci/dciItemDeleteView.html", context)
 
 
+def dci_groups_and_items(request, dci_id):
+    dci = get_object_or_404(DCI, pk=dci_id)
+    dci_groups = DCIGroup.objects.filter(dci=dci)  # Assuming ForeignKey to DCI in DCIGroup
+    dci_items = DCIItem.objects.filter(dciGroup__dci=dci)  # Assuming related DCIItems
+    return render(request, 'dci/dci_groups_items.html', {
+        'dci': dci,
+        'dci_groups': dci_groups,
+        'dci_items': dci_items
+    })
+
 
 
 

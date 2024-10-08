@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect
-from .models import Submissions,DocumentSubmissionAgency, DocumentSubmissionAgencyType 
+from .models import Submissions,DocumentSubmissionAgency, DocumentSubmissionAgencyType, Project
 from .forms import SubmissionsForm, DocumentSubmissionAgencyForm, DocumentSubmissionAgencyTypeForm
 # Create your views here. 
 
@@ -8,6 +8,14 @@ def submissionsList(request):
 
     context = {"submissions": submissions}
     return render(request, "submissions/submissionsList.html", context)
+
+def projectSubmissionsListView(request, project_id):
+    # Filter submissions by project ID
+    project = Project.objects.get(id=project_id)
+    submissions = Submissions.objects.filter(project=project)
+
+    context = {"project": project, "submissions": submissions}
+    return render(request, "submissions/projectSubmissionsList.html", context)
 
 def submissionsCreateView(request):
     context = {}

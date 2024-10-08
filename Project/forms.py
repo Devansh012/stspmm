@@ -106,19 +106,23 @@ class ProjectLeadForm(forms.ModelForm):
 
 class ProjectProposalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        parent_projectLead = kwargs.pop('parent_projectLead', None)
+        # Extract parent_projectLead if provided
+        self.parent_projectLead = kwargs.pop('parent_projectLead', None)
         super().__init__(*args, **kwargs)
 
-        if parent_projectLead:
-            self.fields['projectLead'].initial = parent_projectLead
+        # Set the projectLead field's initial value and disable it if provided
+        if self.parent_projectLead:
+            self.fields['projectLead'].initial = self.parent_projectLead
             self.fields['projectLead'].widget.attrs.update({'readonly': True, 'disabled': 'disabled'})
 
         # Filter out DCIs that are already attached to project proposals
         used_dcis = ProjectProposal.objects.values_list('docControlIndex', flat=True)
         self.fields['docControlIndex'].queryset = DCI.objects.exclude(id__in=used_dcis)
 
+        # Apply Bootstrap styling to all fields
         self.apply_bootstrap()
 
+        # Make certain fields required if the proposal is accepted
         if self.instance and self.instance.accepted:
             self.fields['acceptedDate'].required = True
             self.fields['workOrderNo'].required = True
@@ -128,16 +132,30 @@ class ProjectProposalForm(forms.ModelForm):
     class Meta:
         model = ProjectProposal
         fields = '__all__'
-
-        widgets = {    
+        widgets = {
             'workOrderDate': forms.DateInput(attrs={'type': 'date'}),  # HTML5 date picker
             'acceptedDate': forms.DateInput(attrs={'type': 'date'}),   # HTML5 date picker
             'submissionDate': forms.DateInput(attrs={'type': 'date'})  # HTML5 date picker
         }
 
+    # Apply Bootstrap classes to all fields
     def apply_bootstrap(self):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+
+    # Add validation logic to ensure only one proposal per project lead
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # Get the project lead from the form (or instance if updating)
+        project_lead = self.cleaned_data.get('projectLead') or self.parent_projectLead
+
+        # If a project proposal already exists for this project lead and it's not the current instance (for updates)
+        if ProjectProposal.objects.filter(projectLead=project_lead).exists() and not self.instance.pk:
+            raise forms.ValidationError(f"A project proposal for {project_lead} already exists.")
+
+        return cleaned_data
+
 
 
 class ProjectForm(forms.ModelForm):

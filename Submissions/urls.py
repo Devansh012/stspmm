@@ -3,6 +3,7 @@ from .import views
 
 urlpatterns = [
     path('submissionsList', views.submissionsList, name="submissionsList"),
+    path('submissions/project/<int:project_id>/', views.projectSubmissionsListView, name='projectSubmissionsListView'),  # Submissions for specific project
     path('submissionsCreateView/',views.submissionsCreateView, name="submissionsCreateView"),
     path('submissionsUpdateView/<id>', views.submissionsUpdateView, name="submissionsUpdateView"),
     path('submissionsDeleteView/<id>',views.submissionsDeleteView,name ="submissionsDeleteView"),

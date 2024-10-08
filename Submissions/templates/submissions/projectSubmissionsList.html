@@ -1,0 +1,35 @@
+{% extends "registration/base.html" %}
+{% block content %}
+
+<a href="{% url 'projectList' %}" style="text-decoration: none;">
+    <button type="button" class="btn btn-secondary btn-sm">
+        <span style="font-size: 1.2em;">&#8592; Back</span>
+    </button>
+</a>
+    <h2>Submissions for Project: {{ project.projectName }}</h2>
+
+    <table class="table table-striped table-hover mt-5">
+        <thead>
+            <tr>
+                <th class="text-start border">Submission Name</th>
+                <th class="text-start border">Revision No</th>
+                <th class="text-start border">Submission Date</th>
+         </tr>
+        </thead>
+        <tbody>
+            {% if submissions %}
+                {% for submission in submissions %}
+                    <tr>
+                        <td class="text-start border">{{ submission.name }}</td>
+                        <td class="text-start border">{{ submission.revisionNo }}</td>
+                        <td class="text-start border">{{ submission.submissionDate }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No submissions available for this project.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -74,19 +74,20 @@ class ProjectLead(models.Model):
         return self.projectName
  
 class ProjectProposal(models.Model):
-    projectLead = models.ForeignKey(ProjectLead, on_delete=models.CASCADE, blank=True, null=True)
-    submittedTo = models.ForeignKey(Client,on_delete=models.CASCADE)
+    projectLead = models.OneToOneField(ProjectLead, on_delete=models.CASCADE, blank=True, null=True)
+    submittedTo = models.ForeignKey(Client, on_delete=models.CASCADE)
     submissionDate = models.DateField(blank=True, null=True)
-    proposalCost = models.DecimalField(max_digits=15, decimal_places=2,blank=True, null=True)
-    docControlIndex = models.OneToOneField(DCI,on_delete=models.CASCADE)
+    proposalCost = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
+    docControlIndex = models.OneToOneField(DCI, on_delete=models.CASCADE)
     accepted = models.BooleanField(default=False, blank=True, null=True)
     acceptedDate = models.DateField(blank=True, null=True)
     workOrderNo = models.CharField(max_length=15, blank=True, null=True)
     workOrderDate = models.DateField(blank=True, null=True)
-    workOrderCost = models.DecimalField(max_digits=15, decimal_places=2,blank=True, null=True)
+    workOrderCost = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return f"Proposal to {self.submittedTo} by {self.projectLead} on {self.submissionDate} | Cost: {self.proposalCost}"
+
 
 class Project(models.Model):
     projectProposal = models.ForeignKey(ProjectProposal, on_delete=models.CASCADE, blank=True, null=True)

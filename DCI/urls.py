@@ -7,6 +7,7 @@ urlpatterns = [
     path('dciCreateView',views.dciCreateView, name="dciCreateView"),
     path('dciUpdateView/<id>', views.dciUpdateView, name="dciUpdateView"),
     path('dciDeleteView/<id>',views.dciDeleteView,name ="dciDeleteView"),
+    path('dci/<int:dci_id>/groups-items/', views.dci_groups_and_items, name='dciGroupsAndItems'),
 
    
     path('dciOfDciGroup/<int:id>/', views.dciOfDciGroup, name='dciOfDciGroup'),

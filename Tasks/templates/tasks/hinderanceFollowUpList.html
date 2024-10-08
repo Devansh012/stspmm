@@ -22,6 +22,7 @@
         <thead>
             <tr>
                 <th class="text-start border">Follow Up Date</th>
+                <th class="text-start border">Follow Up Description</th>
                 <th class="text-end border">Document</th>
                 <th class="text-end border">Actions</th>
             </tr>
@@ -30,6 +31,7 @@
             {% for hf in hinderanceFollowUp %}
                 <tr>
                     <td class="text-start border">{{ hf.followUpDate }}</td>
+                    <td class="text-start border">{{ hf.followUpDescription }}</td>
                     <td class="text-end border">
                         <a href="{% url 'documentDownloadView' hf.id %}" class="mx-5" title="Download Document">
                             <i class="fas fa-download" aria-hidden="true"></i>

@@ -1,8 +1,11 @@
 {% extends "registration/base.html" %}
+{% load static %}
+
 {% block content %}
-    <h2>Contact Persons</h2>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <h2 class="text-center my-4">Contact Persons</h2>
     <a href="{% url 'cpCreateView' %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
+        <button type="button" class="btn btn-primary btn-sm mb-4" style="float:right;">
             Add New
         </button>
     </a>
@@ -11,25 +14,23 @@
         <div class="row">
             {% for cp in contactPersons %}
                 <div class="col-md-4 mb-4">
-                    <!-- Bootstrap shadow class -->
-                    <div class="card shadow-lg position-relative">
-                        
-                        <!-- Shadow person image taking less pixel space but shown fully -->
+                    <div class="card shadow-lg border-0 rounded">
                         <img src="/media/simg.jpg"
                              class="card-img-top img-fluid" 
-                             alt="Person's Shadow" style="object-fit: contain; max-height: 150px; width: 100%;">
-                        
+                             alt="Person's Shadow" style="object-fit: cover; max-height: 150px; width: 100%;">
                         <div class="card-body">
-                            <div class="position-absolute" style="top: 10px; right: 10px;">
-                                <a href="{% url 'cpUpdateView' cp.id %}" class="text-primary me-2" title="Edit Contact Person"><i class="fas fa-edit"></i></a>
-                                <form action="{% url 'cpDeleteView' cp.id %}" method="post" style="display:inline;" id="delete-form-{{ cp.id }}">
-                                    {% csrf_token %}
-                                    <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Contact Person">
-                                        <i class="fas fa-trash" aria-hidden="true"></i>
-                                    </button>
-                                </form>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">{{ cp.name }}</h5>
+                                <div class="action-icons">
+                                    <a href="{% url 'cpUpdateView' cp.id %}" class="text-primary me-2" title="Edit Contact Person"><i class="fas fa-edit"></i></a>
+                                    <form action="{% url 'cpDeleteView' cp.id %}" method="post" style="display:inline;" id="delete-form-{{ cp.id }}">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Contact Person">
+                                            <i class="fas fa-trash text-danger"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                            <h5 class="card-title">{{ cp.name }}</h5>
                             <p class="card-text"><strong>Position:</strong> {{ cp.position }}</p>
                             <p class="card-text"><strong>Email:</strong> {{ cp.email }}</p>
                             <p class="card-text"><strong>Mobile 1:</strong> {{ cp.mobile1 }}</p>
