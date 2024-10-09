@@ -110,14 +110,24 @@ class ProjectProposalForm(forms.ModelForm):
         self.parent_projectLead = kwargs.pop('parent_projectLead', None)
         super().__init__(*args, **kwargs)
 
-        # Set the projectLead field's initial value and disable it if provided
-        if self.parent_projectLead:
-            self.fields['projectLead'].initial = self.parent_projectLead
-            self.fields['projectLead'].widget.attrs.update({'readonly': True, 'disabled': 'disabled'})
+        # # Set the projectLead field's initial value and disable it if provided
+        # if self.parent_projectLead:
+        #     self.fields['projectLead'].initial = self.parent_projectLead
+        #     self.fields['projectLead'].widget.attrs.update({'readonly': True, 'disabled': 'disabled'})
 
-        # Filter out DCIs that are already attached to project proposals
-        used_dcis = ProjectProposal.objects.values_list('docControlIndex', flat=True)
+        # Get the currently associated DCI if updating
+        if self.instance and self.instance.pk:
+            current_dci = self.instance.docControlIndex
+        else:
+            current_dci = None
+
+        # Filter out DCIs that are already attached to other project proposals
+        used_dcis = ProjectProposal.objects.exclude(id=self.instance.pk).values_list('docControlIndex', flat=True)
         self.fields['docControlIndex'].queryset = DCI.objects.exclude(id__in=used_dcis)
+
+        # If updating, ensure the current DCI is included in the queryset
+        if current_dci and current_dci not in self.fields['docControlIndex'].queryset:
+            self.fields['docControlIndex'].queryset |= DCI.objects.filter(id=current_dci)
 
         # Apply Bootstrap styling to all fields
         self.apply_bootstrap()
@@ -155,6 +165,7 @@ class ProjectProposalForm(forms.ModelForm):
             raise forms.ValidationError(f"A project proposal for {project_lead} already exists.")
 
         return cleaned_data
+
 
 
 

@@ -1,18 +1,53 @@
 {% extends "registration/base.html" %}
-{% block content %}
-<div class='main' class="form-group">
-    <h2>Update Project Proposal for {{ projectLead.projectName }} </h2>
-    <form method = "POST"  method="get" enctype="multipart/form-data" autocomplete="off">
-        
-
+{% block content %}
+<div class='main form-group'>
+    <h3>Update Project Proposal for {{ projectLead.projectName }}</h3>
+    
+    <form method="POST" enctype="multipart/form-data" autocomplete="off">
         {% csrf_token %}
-        {{form.as_p}}
         
-        <button type="submit" class="btn btn-primary">Save changes</button>
-        <a href="{% url 'ppList' projectLead.id  %}">
+        <!-- Project Lead Information as a label -->
+        <div class="form-group">
+            <label for="projectLead" class="font-weight-bold">Project Lead:</label>
+            <input type="text" id="projectLead" value="{{ projectLead.projectName }}" class="form-control" readonly>
+            <input type="hidden" name="projectLead" value="{{ projectLead.id }}">
+        </div>
+
+        <!-- First Div with submittedTo, submissionDate, proposalCost, and docControlIndex -->
+        <div id="basic-info" class="form-group">
+            {{ form.submittedTo.label_tag }} {{ form.submittedTo }}
+            {{ form.submissionDate.label_tag }} {{ form.submissionDate }}
+            {{ form.proposalCost.label_tag }} {{ form.proposalCost }}
+            {{ form.docControlIndex.label_tag }} {{ form.docControlIndex }}
+
+            <!-- Accepted Checkbox -->
+            <label for="id_accepted">{{ form.accepted.label }}</label>
+            {{ form.accepted }}
+        </div>
+
+        <!-- Accepted Fields -->
+        <div id="accepted-info" class="form-group">
+            <div class="form-group">
+                {{ form.acceptedDate.label_tag }} {{ form.acceptedDate }}
+            </div>
+
+            <div class="form-group">
+                {{ form.workOrderNo.label_tag }} {{ form.workOrderNo }}
+            </div>
+
+            <div class="form-group">
+                {{ form.workOrderDate.label_tag }} {{ form.workOrderDate }}
+            </div>
+
+            <div class="form-group">
+                {{ form.workOrderCost.label_tag }} {{ form.workOrderCost }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Proposal</button>
+        <a href="{% url 'ppList' projectLead.id %}">
             <button type="button" class="btn btn-secondary">Cancel</button>
         </a>
- 
     </form>
 </div>
 {% endblock %}

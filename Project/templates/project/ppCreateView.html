@@ -3,9 +3,25 @@
 <form method="POST" enctype="multipart/form-data" autocomplete="off">
   {% csrf_token %}
   
-  <h3>Add New Project Proposal for {{ projectLead.projectName }}</h3>
-  
-  <!-- First Div with submissionDate, proposalCost, and docControlIndex -->
+  <h3>Add New Project Proposal</h3>
+
+  <!-- Display message if a proposal already exists -->
+  {% if messages %}
+    <div class="alert alert-warning" role="alert">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Project Lead Information as a label -->
+  <div class="form-group">
+    <label for="projectLead" class="font-weight-bold">Project Lead:</label>
+    <input type="text" id="projectLead" value="{{ projectLead.projectName }}" class="form-control" readonly>
+    <input type="hidden" name="projectLead" value="{{ projectLead.id }}">
+  </div>
+
+  <!-- First Div with submittedTo, submissionDate, proposalCost, and docControlIndex -->
   <div id="basic-info" class="form-group">
     {{ form.submittedTo.label_tag }} {{ form.submittedTo }}
     {{ form.submissionDate.label_tag }} {{ form.submissionDate }}
@@ -39,7 +55,7 @@
   {% endif %}
 
   <button type="submit" class="btn btn-primary">Save changes</button>
-  <a href="{% url 'ppList' projectLead.id %}">
+  <a href="{% url 'plList' %}">
     <button type="button" class="btn btn-secondary">Cancel</button>
   </a>
 </form>

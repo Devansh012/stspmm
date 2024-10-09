@@ -1,4 +1,3 @@
-<!-- ppList.html -->
 {% extends "registration/base.html" %}
 {% block content %}
     <h2>Project Proposal List for {{ projectLead.projectName }}</h2>
@@ -8,11 +7,7 @@
             <span style="font-size: 1.2em;">&#8592; Back</span>
         </button>
     </a>
-    <a href="{% url 'ppCreateView' id %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
-            Add New
-        </button>
-    </a>
+    
 
     <!-- Table displaying Project Proposals -->
     <table class="table table-striped table-hover mt-3">
@@ -42,16 +37,35 @@
                             N/A
                         {% endif %}
                     </td>
-                    <td class="text-start border">{{ pp.acceptedDate }}</td>
-                    <td class="text-start border">{{ pp.workOrderNo }}</td>
+                    <td class="text-start border">
+                        {% if pp.accepted %}
+                            {{ pp.acceptedDate }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td class="text-start border">
+                        {% if pp.accepted %}
+                            {{ pp.workOrderNo }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
                     <td class="text-end border">
                         <a href="{% url 'ppUpdateView' pp.id %}" title="Edit"><i class="fas fa-edit"></i></a>
-                        <form action="{% url 'ppDeleteView' pp.id %}" method="post" style="display:inline;">
+                        <form action="{% url 'ppDeleteView' pp.id %}" method="post" style="display:inline;" id="delete-form-{{ pp.id }}">
                             {% csrf_token %}
                             <button type="submit" style="border:none; background:none; padding:0;" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
+                        <script>
+                            document.querySelector('#delete-form-{{ pp.id }}').addEventListener('submit', function (event) {
+                                if (!confirm('Are you sure you want to delete this item "{{ pp.projectLead }}"?')) {
+                                    event.preventDefault(); // Prevent form submission if the user cancels
+                                }
+                            });
+                        </script>
 
                         <!-- Approve button appears only if the projectLead is not approved -->
                         {% if not projectLead.approved and not pp.accepted %}
