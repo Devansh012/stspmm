@@ -1,53 +1,65 @@
 {% extends "registration/base.html" %}
 {% block content %}
-<div class='main form-group'>
+<div class="container mt-4">
     <h3>Update Project Proposal for {{ projectLead.projectName }}</h3>
     
     <form method="POST" enctype="multipart/form-data" autocomplete="off">
         {% csrf_token %}
-        
-        <!-- Project Lead Information as a label -->
-        <div class="form-group">
-            <label for="projectLead" class="font-weight-bold">Project Lead:</label>
-            <input type="text" id="projectLead" value="{{ projectLead.projectName }}" class="form-control" readonly>
-            <input type="hidden" name="projectLead" value="{{ projectLead.id }}">
+
+        <!-- Display message if there are any messages -->
+        {% if messages %}
+        <div class="alert alert-warning" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
         </div>
+        {% endif %}
 
-        <!-- First Div with submittedTo, submissionDate, proposalCost, and docControlIndex -->
-        <div id="basic-info" class="form-group">
-            {{ form.submittedTo.label_tag }} {{ form.submittedTo }}
-            {{ form.submissionDate.label_tag }} {{ form.submissionDate }}
-            {{ form.proposalCost.label_tag }} {{ form.proposalCost }}
-            {{ form.docControlIndex.label_tag }} {{ form.docControlIndex }}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <!-- Project Lead Information -->
+                        <div class="form-group">
+                            <label for="projectLead" class="font-weight-bold">Project Lead:</label>
+                            <input type="text" id="projectLead" value="{{ projectLead.projectName }}" class="form-control" readonly>
+                            <input type="hidden" name="projectLead" value="{{ projectLead.id }}">
+                        </div>
 
-            <!-- Accepted Checkbox -->
-            <label for="id_accepted">{{ form.accepted.label }}</label>
-            {{ form.accepted }}
-        </div>
+                        <!-- Basic Information -->
+                        <div id="basic-info" class="form-group">
+                            {{ form.submittedTo.label_tag }} {{ form.submittedTo }}
+                            {{ form.submissionDate.label_tag }} {{ form.submissionDate }}
+                            {{ form.proposalCost.label_tag }} {{ form.proposalCost }}
+                            {{ form.docControlIndex.label_tag }} {{ form.docControlIndex }}
 
-        <!-- Accepted Fields -->
-        <div id="accepted-info" class="form-group">
-            <div class="form-group">
-                {{ form.acceptedDate.label_tag }} {{ form.acceptedDate }}
+                            <!-- Accepted Checkbox -->
+                            <label for="id_accepted">{{ form.accepted.label }}</label>
+                            {{ form.accepted }}
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                {{ form.workOrderNo.label_tag }} {{ form.workOrderNo }}
-            </div>
-
-            <div class="form-group">
-                {{ form.workOrderDate.label_tag }} {{ form.workOrderDate }}
-            </div>
-
-            <div class="form-group">
-                {{ form.workOrderCost.label_tag }} {{ form.workOrderCost }}
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <!-- Accepted Fields -->
+                        {% if form.instance.accepted %}
+                        <div id="accepted-info" class="form-group">
+                            {{ form.acceptedDate.label_tag }} {{ form.acceptedDate }}
+                            {{ form.workOrderNo.label_tag }} {{ form.workOrderNo }}
+                            {{ form.workOrderDate.label_tag }} {{ form.workOrderDate }}
+                            {{ form.workOrderCost.label_tag }} {{ form.workOrderCost }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
 
         <button type="submit" class="btn btn-primary">Save Proposal</button>
-        <a href="{% url 'ppList' projectLead.id %}">
-            <button type="button" class="btn btn-secondary">Cancel</button>
-        </a>
+        <a href="{% url 'ppList' projectLead.id %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

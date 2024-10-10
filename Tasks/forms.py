@@ -16,7 +16,10 @@ class TasksForm(forms.ModelForm):
         fields = ['project', 'dciItem', 'taskName', 'taskDescription', 'assignedTo', 'completed', 'targetDateOfCompletion']
         widgets = {
             'dciItem': Select2MultipleWidget(attrs={'class': 'form-control'}),  # Using Select2 for multi-select dropdown
+            'taskDescription': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+
         }
+        
 
     def __init__(self, *args, **kwargs):
         project = kwargs.pop('project', None)
@@ -45,6 +48,8 @@ class TaskActivitiesForm(forms.ModelForm):
             'dateOfEntry': forms.HiddenInput(),  # Hide the dateOfEntry field if you want to prevent it from being edited
             'entryDoneBy': forms.HiddenInput(),  # Hide the entryDoneBy field from the form
             'completionDate': forms.DateInput(attrs={'type': 'date'}),  # Date picker for completionDate
+            'activityDescription': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+
         }
 
     def __init__(self, *args, **kwargs):
@@ -66,6 +71,8 @@ class HinderancesForm(forms.ModelForm):
         widgets = {
             'dateOfOccurrence': forms.DateInput(attrs={'type': 'date'}),  # Date picker for dateOfOccurrence
             'clearedDate': forms.DateInput(attrs={'type': 'date'}),  # Date picker for clearedDate
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+
         }
 
     def __init__(self, *args, **kwargs):

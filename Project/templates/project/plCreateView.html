@@ -1,17 +1,53 @@
 {% extends "registration/base.html" %}
-{% block content %}
-<form method="POST"  enctype="multipart/form-data" autocomplete="off">
+{% block content %}
+<div class="container mt-4">
+    <h3>Add New Project Lead</h3>
 
-  <h3>Add New Project Lead</h3>
+    <form method="POST" enctype="multipart/form-data" autocomplete="off">
+        {% csrf_token %}
 
-  {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Project Details</h5>
+                        {{ form.projectName.label }}
+                        {{ form.projectName }}
+                        <br>
+                        {{ form.cost.label }}
+                        {{ form.cost }}
+                        <br>
+                        {{ form.agency.label }}
+                        {{ form.agency }}
+                        <br>
+                        {{ form.sector.label }}
+                        {{ form.sector }}
+                    </div>
+                </div>
+            </div>
 
-  {{form.as_p}} 
- 
-  <button type="submit" class="btn btn-primary">Save changes</button>
-  <a href="{% url 'plList' %}">
-    <button type="button" class="btn btn-secondary">Cancel</button>
-</a>
-   
-</form>
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Additional Details</h5>
+                        {{ form.scopeItem.label }}
+                        {{ form.scopeItem }}
+                        <br>
+                        {{ form.description.label }}
+                        {{ form.description }}
+                        <br>
+                        {{ form.source.label }}
+                        {{ form.source }}
+                        <br>
+                        {{ form.sourceDescription.label }}
+                        {{ form.sourceDescription }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <a href="{% url 'plList' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
 {% endblock %}

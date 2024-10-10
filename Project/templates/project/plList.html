@@ -40,16 +40,18 @@
                     <a href="{% url 'ppList' pl.id %}" class="mx-5" title="View Project Proposal"><i class="fas fa-file-alt"></i></a>
                 </td>
 
-                <!-- New "Create Proposal" button -->
-                <td class="text-start border">
-                    {% if not pl.projectproposal_set.exists %}  <!-- Check if no existing proposals -->
-                        <a href="{% url 'ppCreateView' pl.id %}">
-                            <button type="button" class="btn btn-success btn-sm">Create Proposal</button>
-                        </a>
-                    {% else %}
-                        <span class="text-muted">Proposal Exists</span> <!-- Message if proposal exists -->
-                    {% endif %}
-                </td>
+<!-- New "Create Proposal" button -->
+<td class="text-start border">
+    {% if not pl.projectproposal %}  <!-- Check if ProjectLead has no linked ProjectProposal -->
+        <a href="{% url 'ppCreateView' pl.id %}">
+            <button type="button" class="btn btn-success btn-sm">Create Proposal</button>
+        </a>
+    {% else %}
+        <span class="text-muted">Proposal Exists</span> <!-- Message if proposal exists -->
+    {% endif %}
+</td>
+
+
 
                 <td class="text-end border">
                     <!-- Conditionally display Edit and Delete buttons if not approved -->

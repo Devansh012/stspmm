@@ -246,14 +246,20 @@ def dciItemDeleteView(request, id):
     return render(request, "dci/dciItemDeleteView.html", context)
 
 
+# views.py
 def dci_groups_and_items(request, dci_id):
     dci = get_object_or_404(DCI, pk=dci_id)
-    dci_groups = DCIGroup.objects.filter(dci=dci)  # Assuming ForeignKey to DCI in DCIGroup
-    dci_items = DCIItem.objects.filter(dciGroup__dci=dci)  # Assuming related DCIItems
+    
+    # Get the groups and items related to the DCI
+    dci_groups = DCIGroup.objects.filter(dci=dci)  # Assuming DCIGroup has a ForeignKey to DCI
+    dci_items = DCIItem.objects.filter(dciGroup__dci=dci)  # Assuming DCIItem has a ForeignKey to DCIGroup
+
+    # Zip the two querysets together
+    groups_and_items = zip(dci_groups, dci_items)
+    
     return render(request, 'dci/dci_groups_items.html', {
         'dci': dci,
-        'dci_groups': dci_groups,
-        'dci_items': dci_items
+        'groups_and_items': groups_and_items,  # Pass the zipped data to the template
     })
 
 

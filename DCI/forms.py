@@ -34,6 +34,10 @@ class DCIItemForm(forms.ModelForm):
     class Meta:
         model = DCIItem
         fields = ['sNo', 'itemCode', 'name', 'documentNo', 'description', 'likelySubmissionDate', 'weightage', 'associatedCost', 'dciGroup']
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)

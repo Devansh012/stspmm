@@ -93,8 +93,17 @@ class StaffForm(forms.ModelForm):
 class ProjectLeadForm(forms.ModelForm):
     class Meta:
         model = ProjectLead
-        fields = ['projectName', 'cost', 'agency', 'scopeItem', 'description', 'approved', 'source', 'sourceDescription']
-
+        fields = ['projectName', 'cost', 'agency','sector', 'scopeItem', 'description', 'approved', 'source', 'sourceDescription']
+        widgets = {
+            'projectName': forms.TextInput(attrs={'class': 'form-control'}),
+            'cost': forms.NumberInput(attrs={'class': 'form-control'}),
+            'agency': forms.TextInput(attrs={'class': 'form-control'}),
+            'sector': forms.Select(attrs={'class': 'form-control'}),
+            'scopeItem': forms.Select(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+            'source': forms.TextInput(attrs={'class': 'form-control'}),
+            'sourceDescription': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.apply_bootstrap()
@@ -186,7 +195,9 @@ class ProjectForm(forms.ModelForm):
         widgets = {
             'dateOfCommencement': forms.DateInput(attrs={'type': 'date'}),
             'lastDateOfDelivery': forms.DateInput(attrs={'type': 'date'}),
-            'workOrderDate': forms.DateInput(attrs={'type': 'date'})  # HTML5 date picker
+            'workOrderDate': forms.DateInput(attrs={'type': 'date'}),  # HTML5 date picker
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+
         }
 
     def apply_bootstrap(self):

@@ -1,5 +1,4 @@
 import json
-from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect,HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -333,13 +332,6 @@ def ppList(request, id):
 def ppCreateView(request, id):
     projectLead = get_object_or_404(ProjectLead, id=id)
 
-    # Check if a proposal already exists for this project lead
-    existing_proposal = ProjectProposal.objects.filter(projectLead=projectLead).first()
-
-    # If a proposal exists, display a warning message and render the form
-    if existing_proposal:
-        messages.error(request, "A project proposal already exists for this project lead.")
-
     form = ProjectProposalForm(request.POST or None)
 
     if form.is_valid():
@@ -352,9 +344,9 @@ def ppCreateView(request, id):
         "form": form,
         "id": id,
         "projectLead": projectLead,
-        "proposal_exists": existing_proposal is not None,  # Add this line
     }
     return render(request, "project/ppCreateView.html", context)
+
 
 def ppUpdateView(request, id):
     obj = get_object_or_404(ProjectProposal, id=id)
@@ -459,6 +451,14 @@ def approve_proposal(request):
         proposal.workOrderCost = work_amount
         proposal.save()
 
+        # Debugging output
+        print(f"Creating project for sector: {proposal.projectLead.sector}")
+
+        # Check if a project with the same sector already exists
+        existing_project = Project.objects.filter(sector=proposal.projectLead.sector).first()
+        if existing_project:
+            return JsonResponse({'error': 'A project with the same sector already exists.'}, status=400)
+
         # Create a new project using details from the proposal and projectLead
         project = Project.objects.create(
             projectProposal=proposal,
@@ -472,8 +472,9 @@ def approve_proposal(request):
         )
 
         return JsonResponse({'message': 'Project approved and created successfully!'})
-    
+
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 
 

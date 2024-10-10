@@ -5,6 +5,10 @@ class FolderForm(forms.ModelForm):
     class Meta:
         model = Folder
         fields = ['name', 'parentFolder', 'notes']
+        widgets = {
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)

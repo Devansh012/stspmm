@@ -84,21 +84,35 @@
         <form method="post" id="approvalForm">
             {% csrf_token %}
             <input type="hidden" name="proposal_id" id="proposal_id">
-            <label for="approvalDate">Approval Date</label>
-            <input type="date" id="approvalDate" name="approvalDate" required>
             
-            <label for="workOrderNo">Work Order No.</label>
-            <input type="text" id="workOrderNo" name="workOrderNo" required>
-            
-            <label for="workOrderDate">Work Order Date</label>
-            <input type="date" id="workOrderDate" name="workOrderDate" required>
-            
-            <label for="workAmount">Work Amount</label>
-            <input type="number" id="workAmount" name="workAmount" required>
-
-            <button type="submit">Approve</button>
+            <ul class="list-unstyled">
+                <li class="form-group">
+                    <label for="approvalDate">Approval Date</label>
+                    <input type="date" id="approvalDate" name="approvalDate" class="form-control" required>
+                </li>
+                
+                <li class="form-group">
+                    <label for="workOrderNo">Work Order No.</label>
+                    <input type="text" id="workOrderNo" name="workOrderNo" class="form-control" required>
+                </li>
+                
+                <li class="form-group">
+                    <label for="workOrderDate">Work Order Date</label>
+                    <input type="date" id="workOrderDate" name="workOrderDate" class="form-control" required>
+                </li>
+                
+                <li class="form-group">
+                    <label for="workAmount">Work Amount</label>
+                    <input type="number" id="workAmount" name="workAmount" class="form-control" required>
+                </li>
+    
+                <li class="form-group">
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                </li>
+            </ul>
         </form>
     </div>
+    
 
     <script>
         function showApprovalDialog(proposalId) {

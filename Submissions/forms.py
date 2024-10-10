@@ -19,6 +19,11 @@ class SubmissionsForm(forms.ModelForm):
             'submissionDate': forms.DateInput(attrs={'type': 'date'}),
             'approvalDate': forms.DateInput(attrs={'type': 'date'}),
             'dciItems': forms.SelectMultiple(attrs={'class': 'form-control'}),  # Use SelectMultiple widget for dciItems
+            'whyRevision': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+            'commentIfAny': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+            'commentReply': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
+
         }
 
     def __init__(self, *args, **kwargs):
