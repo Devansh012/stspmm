@@ -1,0 +1,7 @@
+<form method="POST" enctype="multipart/form-data" hx-post="{% if form.instance.pk %}{% url 'hinderanceFollowUpUpdateView' form.instance.pk %}{% else %}{% url 'hinderanceFollowUpCreateView' hinderance.id %}{% endif %}" hx-target="#modal-body-content" hx-swap="outerHTML">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  </form>
+  

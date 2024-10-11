@@ -1,0 +1,31 @@
+<tbody>
+    {% for hf in hinderanceFollowUp %}
+        <tr>
+            <td class="text-start border">{{ hf.followUpDate }}</td>
+            <td class="text-start border">{{ hf.followUpDescription }}</td>
+            <td class="text-end border">
+                <a href="{% url 'documentDownloadView' hf.id %}" class="mx-5" title="Download Document">
+                    <i class="fas fa-download" aria-hidden="true"></i>
+                </a>
+            </td>
+            <td class="text-end border">
+                <a hx-get="{% url 'hinderanceFollowUpUpdateView' hf.id %}" hx-target="#modal-body-content" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#formModal">
+                    <i class="fas fa-edit" aria-hidden="true"></i>
+                </a>
+                <form action="{% url 'hinderanceFollowUpDeleteView' hf.id %}" class="mx-2" method="post" style="display:inline;" id="delete-form-{{ hf.id }}">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Follow Up">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
+                </form>
+                <script>
+                    document.querySelector('#delete-form-{{ hf.id }}').addEventListener('submit', function (event) {
+                        if (!confirm('Are you sure you want to delete this item "{{ hf.followUpDescription }}"?')) {
+                            event.preventDefault(); // Prevent form submission if the user cancels
+                        }
+                    });
+                </script>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>

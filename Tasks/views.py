@@ -222,33 +222,40 @@ def documentDownloadView(request, id):
 def hinderanceFollowUpCreateView(request, id):
     hinderance = get_object_or_404(Hinderances, id=id)
     if request.method == "POST":
-        form = HinderanceFollowUpForm(request.POST or None, request.FILES or None)
+        form = HinderanceFollowUpForm(request.POST, request.FILES)
         if form.is_valid():
             hinderanceFollowUp = form.save(commit=False)
             hinderanceFollowUp.hinderance = hinderance
             hinderanceFollowUp.save()
+
+            if request.headers.get('HX-Request'):
+                # Return only the table row that was updated
+                hinderanceFollowUpList = HinderanceFollowUp.objects.filter(hinderance=hinderance)
+                return render(request, "tasks/hinderanceFollowUpTablePartial.html", {"hinderanceFollowUp": hinderanceFollowUpList, "hinderance": hinderance})
             return redirect("hinderanceFollowUpList", id=id)
     else:
         form = HinderanceFollowUpForm()
-    return render(request, "tasks/hinderanceFollowUpCreateView.html", {
-        "form": form,
-        "hinderance": hinderance,
-        "id": id
-    })
+
+    if request.headers.get('HX-Request'):
+        return render(request, "tasks/hinderanceFollowUpFormPartial.html", {"form": form, "hinderance": hinderance})
 
 def hinderanceFollowUpUpdateView(request, id):
     obj = get_object_or_404(HinderanceFollowUp, id=id)
-    hinderance_id = obj.hinderance.id
     hinderance = obj.hinderance
     form = HinderanceFollowUpForm(request.POST or None, request.FILES or None, instance=obj)
     if form.is_valid():
         form.save()
-        return redirect("hinderanceFollowUpList", id=hinderance_id)
-    return render(request, "tasks/hinderanceFollowUpUpdateView.html", {
-        "form": form,
-        "hinderance": hinderance,
-        "id": hinderance_id
-    })
+
+        if request.headers.get('HX-Request'):
+            hinderanceFollowUpList = HinderanceFollowUp.objects.filter(hinderance=hinderance)
+            return render(request, "tasks/hinderanceFollowUpTablePartial.html", {"hinderanceFollowUp": hinderanceFollowUpList, "hinderance": hinderance})
+        return redirect("hinderanceFollowUpList", id=hinderance.id)
+
+    if request.headers.get('HX-Request'):
+        return render(request, "tasks/hinderanceFollowUpFormPartial.html", {"form": form, "hinderance": hinderance})
+
+
+
 
 def hinderanceFollowUpDeleteView(request, id):
     obj = get_object_or_404(HinderanceFollowUp, id=id)

@@ -1,41 +1,161 @@
 {% extends "registration/base.html" %}
 {% block content %}
+
+<div class="container mt-4">
     <h3>Add New Submission</h3>
     <form method="POST" enctype="multipart/form-data" autocomplete="off">
         {% csrf_token %}
-        {{ form.as_p }} 
+        
+        <div class="row">
+            <!-- Card 1: Project Details -->
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Project Details</h5>
+                        <div class="form-group">
+                            <label for="id_project">Project:</label>
+                            {{ form.project }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_name">Name:</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_revisionNo">Revision No:</label>
+                            {{ form.revisionNo }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_whyRevision">Why Revision:</label>
+                            {{ form.whyRevision }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Check and Print Details -->
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Check and Print Details</h5>
+                        <div class="form-group">
+                            <label for="id_checkedBy">Checked By:</label>
+                            {{ form.checkedBy }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_checkingDate">Checking Date:</label>
+                            {{ form.checkingDate }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_printedBy">Printed By:</label>
+                            {{ form.printedBy }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_printingDate">Printing Date:</label>
+                            {{ form.printingDate }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Card 3: Submission Details -->
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Submission Details</h5>
+                        <div class="form-group">
+                            <label for="id_submittedTo">Submitted To:</label>
+                            {{ form.submittedTo }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_submissionDate">Submission Date:</label>
+                            {{ form.submissionDate }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_description">Description:</label>
+                            {{ form.description }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_dciItems">DCI Items:</label>
+                            {{ form.dciItems }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Comments and Approvals -->
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Comments and Approvals</h5>
+                        <div class="form-group">
+                            <label for="id_earlierSubmissionReference">Earlier Submission Reference:</label>
+                            {{ form.earlierSubmissionReference }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_commentIfAny">Comment (if any):</label>
+                            {{ form.commentIfAny }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_commentDocument">Comment Document:</label>
+                            {{ form.commentDocument }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_commentReply">Comment Reply:</label>
+                            {{ form.commentReply }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_replyDocument">Reply Document:</label>
+                            {{ form.replyDocument }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_approved">Approved:</label>
+                            {{ form.approved }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_approvalDate">Approval Date:</label>
+                            {{ form.approvalDate }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Save changes</button>
         <a href="{% url 'submissionsList' %}" class="btn btn-secondary">Cancel</a>
     </form>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+</div>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Initialize Select2 for the dciItems field
-            $('#id_dciItems').select2({
-                placeholder: 'Select DCI Items',
-                allowClear: true
-            });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 
-            // Move selected items to the top
-            $('#id_dciItems').on('select2:select', function (e) {
-                var selectedData = $(this).val();
-                if (selectedData) {
-                    var sortedItems = selectedData.sort();
-                    $(this).val(sortedItems).trigger('change');
-                }
-            });
-
-            // Remove selected items from the dropdown
-            $('#id_dciItems').on('select2:unselect', function (e) {
-                var removedData = e.params.data.id;
-                var selectedData = $(this).val();
-                var newSelection = selectedData.filter(item => item !== removedData);
-                $(this).val(newSelection).trigger('change');
-            });
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Initialize Select2 for the dciItems field
+        $('#id_dciItems').select2({
+            placeholder: 'Select DCI Items',
+            allowClear: true
         });
-    </script>
+
+        // Move selected items to the top
+        $('#id_dciItems').on('select2:select', function (e) {
+            var selectedData = $(this).val();
+            if (selectedData) {
+                var sortedItems = selectedData.sort();
+                $(this).val(sortedItems).trigger('change');
+            }
+        });
+
+        // Remove selected items from the dropdown
+        $('#id_dciItems').on('select2:unselect', function (e) {
+            var removedData = e.params.data.id;
+            var selectedData = $(this).val();
+            var newSelection = selectedData.filter(item => item !== removedData);
+            $(this).val(newSelection).trigger('change');
+        });
+    });
+</script>
+
 {% endblock %}

@@ -36,9 +36,6 @@ class TasksForm(forms.ModelForm):
             self.fields['dciItem'].queryset = DCIItem.objects.filter(dciGroup__in=dci_groups)
 
 
-
-
-
 # Task Activities Form
 class TaskActivitiesForm(forms.ModelForm):
     class Meta:
@@ -91,6 +88,7 @@ class HinderanceFollowUpForm(forms.ModelForm):
         ]
         widgets = {
             'followUpDate': forms.DateInput(attrs={'type': 'date'}),  # Date picker for followUpDate
+            'followUpDescription': forms.Textarea(attrs={'class': 'form-control', 'rows':3}),
         }
 
     def __init__(self, *args, **kwargs):
