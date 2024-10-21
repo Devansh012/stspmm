@@ -6,7 +6,7 @@ from django.http import FileResponse
 
 # Create your views here.
 def folderList(request):
-    folders = Folder.objects.select_related('parentFolder').all()
+    folders = Folder.objects.select_related('parentFolder').all().order_by('name')
 
     context = {"folders": folders}
     return render(request, "docs/folderList.html", context)
@@ -82,7 +82,7 @@ def documentList(request, id):
             return render(request, 'docs/folder_password.html', {"folder": folder})
 
     # If folder is not protected or already unlocked, show the document list
-    documents = Document.objects.filter(folder=folder)
+    documents = Document.objects.filter(folder=folder).order_by('name')
     context = {"documents": documents, "folder": folder}
     return render(request, "docs/documentList.html", context)
 

@@ -34,6 +34,7 @@ urlpatterns = [
     path('cpDeleteView/<int:id>/', views.cpDeleteView, name="cpDeleteView"),  
 
     path('plList/', views.plList, name='plList'),
+    path('project-lead/<int:id>/', views.plDetailView, name='plDetailView'),
     path('plCreateView/', views.plCreateView, name='plCreateView'),
     path('plUpdateView/<id>', views.plUpdateView, name='plUpdateView'),
     path('plDeleteView/<id>', views.plDeleteView, name='plDeleteView'),

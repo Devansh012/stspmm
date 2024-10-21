@@ -1,9 +1,7 @@
 {% extends "registration/base.html" %}
-{% load static %}
-
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <h2 class="text-center my-4">Contact Persons</h2>
+
+    <h2>Contact Persons</h2>
     <a href="{% url 'cpCreateView' %}">
         <button type="button" class="btn btn-primary btn-sm mb-4" style="float:right;">
             Add New
@@ -14,10 +12,11 @@
         <div class="row">
             {% for cp in contactPersons %}
                 <div class="col-md-4 mb-4">
-                    <div class="card shadow-lg border-0 rounded">
+                    <div class= "card shadow-sm position-relative" style="font-size: 0.9rem; padding: 5px;" >
                         <img src="/media/simg.jpg"
                              class="card-img-top img-fluid" 
-                             alt="Person's Shadow" style="object-fit: cover; max-height: 150px; width: 100%;">
+                             alt="Person's Shadow" style="object-fit: contain; max-height: 150px; width: 100%;">
+                             
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h5 class="card-title">{{ cp.name }}</h5>

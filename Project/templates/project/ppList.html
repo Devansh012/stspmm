@@ -80,77 +80,85 @@
     </table>
 
     <!-- Approval Dialog -->
-    <div id="approvalDialog" style="display:none;">
-        <form method="post" id="approvalForm">
-            {% csrf_token %}
-            <input type="hidden" name="proposal_id" id="proposal_id">
+   <!-- Approval Dialog -->
+   <div id="approvalDialog" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 30px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); width: 500px; max-width: 90%; height: auto;">
+    <form method="post" id="approvalForm">
+        {% csrf_token %}
+        <input type="hidden" name="proposal_id" id="proposal_id">
+        
+        <ul class="list-unstyled">
+            <li class="form-group">
+                <label for="approvalDate">Approval Date</label>
+                <input type="date" id="approvalDate" name="approvalDate" class="form-control" required>
+            </li>
             
-            <ul class="list-unstyled">
-                <li class="form-group">
-                    <label for="approvalDate">Approval Date</label>
-                    <input type="date" id="approvalDate" name="approvalDate" class="form-control" required>
-                </li>
-                
-                <li class="form-group">
-                    <label for="workOrderNo">Work Order No.</label>
-                    <input type="text" id="workOrderNo" name="workOrderNo" class="form-control" required>
-                </li>
-                
-                <li class="form-group">
-                    <label for="workOrderDate">Work Order Date</label>
-                    <input type="date" id="workOrderDate" name="workOrderDate" class="form-control" required>
-                </li>
-                
-                <li class="form-group">
-                    <label for="workAmount">Work Amount</label>
-                    <input type="number" id="workAmount" name="workAmount" class="form-control" required>
-                </li>
-    
-                <li class="form-group">
-                    <button type="submit" class="btn btn-primary">Approve</button>
-                </li>
-            </ul>
-        </form>
-    </div>
-    
-
-    <script>
-        function showApprovalDialog(proposalId) {
-            document.getElementById('proposal_id').value = proposalId;
-            document.getElementById('approvalDialog').style.display = 'block';
-        }
-
-        // Handle form submission for approval
-        document.getElementById('approvalForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+            <li class="form-group">
+                <label for="workOrderNo">Work Order No.</label>
+                <input type="text" id="workOrderNo" name="workOrderNo" class="form-control" required>
+            </li>
             
-            let proposalId = document.getElementById('proposal_id').value;
-            let approvalDate = document.getElementById('approvalDate').value;
-            let workOrderNo = document.getElementById('workOrderNo').value;
-            let workOrderDate = document.getElementById('workOrderDate').value;
-            let workAmount = document.getElementById('workAmount').value;
+            <li class="form-group">
+                <label for="workOrderDate">Work Order Date</label>
+                <input type="date" id="workOrderDate" name="workOrderDate" class="form-control" required>
+            </li>
+            
+            <li class="form-group">
+                <label for="workAmount">Work Amount</label>
+                <input type="number" id="workAmount" name="workAmount" class="form-control" required>
+            </li>
 
-            // Send the data via AJAX (Django view will handle this)
-            fetch("{% url 'ppApproveView' %}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    proposalId: proposalId,
-                    approvalDate: approvalDate,
-                    workOrderNo: workOrderNo,
-                    workOrderDate: workOrderDate,
-                    workAmount: workAmount
-                })
-            }).then(response => {
-                if (response.ok) {
-                    // Handle success (e.g., hide the dialog, reload the page, etc.)
-                    alert('Project approved successfully!');
-                    location.reload();
-                }
-            });
+            <!-- Submit and Cancel buttons -->
+            <li class="form-group">
+                <button type="submit" class="btn btn-primary">Approve</button>
+                <button type="button" class="btn btn-secondary" onclick="hideApprovalDialog()">Cancel</button>
+            </li>
+        </ul>
+    </form>
+</div>
+
+<script>
+    function showApprovalDialog(proposalId) {
+        document.getElementById('proposal_id').value = proposalId;
+        document.getElementById('approvalDialog').style.display = 'block';
+    }
+
+    function hideApprovalDialog() {
+        document.getElementById('approvalDialog').style.display = 'none';
+    }
+
+    // Handle form submission for approval
+    document.getElementById('approvalForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        let proposalId = document.getElementById('proposal_id').value;
+        let approvalDate = document.getElementById('approvalDate').value;
+        let workOrderNo = document.getElementById('workOrderNo').value;
+        let workOrderDate = document.getElementById('workOrderDate').value;
+        let workAmount = document.getElementById('workAmount').value;
+
+        // Send the data via AJAX (Django view will handle this)
+        fetch("{% url 'ppApproveView' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                proposalId: proposalId,
+                approvalDate: approvalDate,
+                workOrderNo: workOrderNo,
+                workOrderDate: workOrderDate,
+                workAmount: workAmount
+            })
+        }).then(response => {
+            if (response.ok) {
+                // Handle success (e.g., hide the dialog, reload the page, etc.)
+                alert('Project approved successfully!');
+                location.reload();
+            }
         });
-    </script>
+    });
+</script>
+
+
 {% endblock %}

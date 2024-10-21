@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 
 def tasksList(request, id):
     project = get_object_or_404(Project, id=id)
-    tasks = Tasks.objects.filter(project=project)
+    tasks = Tasks.objects.filter(project=project).order_by('taskName')
 
     context = {
         'tasks': tasks,
@@ -93,6 +93,12 @@ def tasksDeleteView(request, id):
         return HttpResponseRedirect("/tasks/tasksList")
     return render(request, "tasks/tasksDeleteView.html", context2)
 
+
+def load_task_activities(request, task_id):
+    task = get_object_or_404(Tasks, id=task_id)
+    task_activities = TaskActivities.objects.filter(task=task)
+    return render(request, 'tasks/task_activities_partial.html', {'task_activities': task_activities, 'task': task})
+
 def task_dci_item_view(request, task_id):
     task = get_object_or_404(Tasks, id=task_id)
     dci_items = task.dciItem.all()  # Assuming dciItem is a ManyToManyField or ForeignKey
@@ -102,15 +108,9 @@ def task_dci_item_view(request, task_id):
         'dci_items': dci_items,
     }
     return render(request, 'tasks/task_dci_items.html', context)
-
-def load_task_activities(request, task_id):
-    task = get_object_or_404(Tasks, id=task_id)
-    task_activities = TaskActivities.objects.filter(task=task)
-    return render(request, 'tasks/task_activities_partial.html', {'task_activities': task_activities, 'task': task})
-
 def taskActivitiesList(request, id):
     task = get_object_or_404(Tasks, id=id)
-    taskActivities = TaskActivities.objects.filter(task_id=id)
+    taskActivities = TaskActivities.objects.filter(task_id=id).order_by('dateOfEntry')
     project = task.project  # Retrieve the project from the task
     context = {
         "taskactivities": taskActivities,
@@ -125,10 +125,10 @@ def taskActivitiesCreateView(request, id):
     task = get_object_or_404(Tasks, id=id)
 
     if request.method == "POST":
-        form = TaskActivitiesForm(request.POST, request.FILES, user=request.user)
+        form = TaskActivitiesForm(request.POST, request.FILES, user=request.user, task_instance=task)  # Pass the task instance
         if form.is_valid():
             task_activity = form.save(commit=False)
-            task_activity.task = task
+            task_activity.task = task  # Set the task explicitly
             task_activity.save()
 
             if request.headers.get('Hx-Request'):  # HTMX request
@@ -141,7 +141,7 @@ def taskActivitiesCreateView(request, id):
             return redirect("tasksList", id=id)
 
     else:
-        form = TaskActivitiesForm(user=request.user)
+        form = TaskActivitiesForm(user=request.user, task_instance=task)  # Pass the task instance for GET request
 
     if request.headers.get('Hx-Request'):  # HTMX request
         return render(request, 'tasks/taskActivitiesCreateView.html', {'form': form, 'task': task})
@@ -175,8 +175,9 @@ def taskActivitiesDeleteView(request, id):
     return render(request, "tasks/taskActivitiesDeleteView.html", context)
 
 def hinderancesList(request):
-    hinderances = Hinderances.objects.all()
+    hinderances = Hinderances.objects.all().order_by('dciItem')  # Ascending order by 'dciItem'
     return render(request, 'tasks/hinderancesList.html', {'hinderances': hinderances})
+
 
 def hinderancesCreateView(request):
     form = HinderancesForm(request.POST or None, request.FILES or None)
@@ -206,7 +207,7 @@ def hinderancesDeleteView(request, id):
 
 def hinderanceFollowUpList(request, id):
     hinderance = get_object_or_404(Hinderances, id=id)
-    hinderanceFollowUps = HinderanceFollowUp.objects.filter(hinderance=hinderance)
+    hinderanceFollowUps = HinderanceFollowUp.objects.filter(hinderance=hinderance).order_by('followUpDate')
     context = {
         "hinderanceFollowUp": hinderanceFollowUps,
         "hinderance": hinderance,

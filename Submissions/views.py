@@ -4,7 +4,7 @@ from .forms import SubmissionsForm, DocumentSubmissionAgencyForm, DocumentSubmis
 # Create your views here. 
 
 def submissionsList(request):
-    submissions = Submissions.objects.all()
+    submissions = Submissions.objects.all().order_by('project')
 
     context = {"submissions": submissions}
     return render(request, "submissions/submissionsList.html", context)

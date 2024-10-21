@@ -19,7 +19,7 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <!-- Project Lead Information -->
+                        <h5 class="card-title" >Project Lead Details</h5>
                         <div class="form-group">
                             <label for="projectLead" class="font-weight-bold">Project Lead:</label>
                             <input type="text" id="projectLead" value="{{ projectLead.projectName }}" class="form-control" readonly>
@@ -44,7 +44,7 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <!-- Accepted Fields -->
+                        <h5 class="card-title" >Acceptance Details</h5>
                         <div id="accepted-info" class="form-group">
                             {{ form.acceptedDate.label_tag }} {{ form.acceptedDate }}
                             {{ form.workOrderNo.label_tag }} {{ form.workOrderNo }}

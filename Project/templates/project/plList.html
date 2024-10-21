@@ -14,8 +14,8 @@
             <th class="text-start border">Agency</th>
             <th class="text-start border">Source</th>
             <th class="text-start border">Approved</th>
-            <th class="text-start border">Project Proposal</th>
-            <th class="text-start border">Create Proposal</th> <!-- New Column -->
+            <th class="text-start border">Proposal</th> <!-- Merged Column -->
+            <th class="text-end border">Detail View</th>
             <th class="text-end border">Actions</th>
         </tr>
     </thead>
@@ -29,30 +29,34 @@
 
                 <!-- Approved field with conditional images -->
                 <td class="text-start border">
-                    {% if pl.approved %}
+                    {% if pl.approved is True %}
                         <i class="fas fa-check-square text-success mx-5" title="Approved"></i>
-                    {% else %}
+                    {% elif pl.approved is False %}
                         <i class="fas fa-times-square text-danger mx-5" title="Not Approved"></i>
+                    {% else %}
+                        <span class="text-muted mx-5">Unknown</span>
                     {% endif %}
                 </td>
+                
 
-                <td class="text-end border">
-                    <a href="{% url 'ppList' pl.id %}" class="mx-5" title="View Project Proposal"><i class="fas fa-file-alt"></i></a>
+                <!-- Merged Proposal Column -->
+                <td class="text-start border">
+                    {% if pl.projectproposal %}
+                        <!-- Show View Proposal icon if proposal exists -->
+                        <a href="{% url 'ppList' pl.id %}" class="mx-5" title="View Project Proposal">
+                            <i class="fas fa-file-alt"></i>
+                        </a>
+                    {% else %}
+                        <!-- Show Create Proposal icon if no proposal exists -->
+                        <a href="{% url 'ppCreateView' pl.id %}" class="mx-5" title="Create Proposal">
+                            <i class="fas fa-plus-square text-success"></i>
+                        </a>
+                    {% endif %}
                 </td>
-
-<!-- New "Create Proposal" button -->
-<td class="text-start border">
-    {% if not pl.projectproposal %}  <!-- Check if ProjectLead has no linked ProjectProposal -->
-        <a href="{% url 'ppCreateView' pl.id %}">
-            <button type="button" class="btn btn-success btn-sm">Create Proposal</button>
-        </a>
-    {% else %}
-        <span class="text-muted">Proposal Exists</span> <!-- Message if proposal exists -->
-    {% endif %}
-</td>
-
-
-
+                <td class="text-end border">
+                    <a href="{% url 'plDetailView' pl.id %}">{{ pl.projectName }}</a>
+                </td>
+                
                 <td class="text-end border">
                     <!-- Conditionally display Edit and Delete buttons if not approved -->
                     {% if not pl.approved %}

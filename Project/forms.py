@@ -93,7 +93,7 @@ class StaffForm(forms.ModelForm):
 class ProjectLeadForm(forms.ModelForm):
     class Meta:
         model = ProjectLead
-        fields = ['projectName', 'cost', 'agency','sector', 'scopeItem', 'description', 'approved', 'source', 'sourceDescription']
+        fields = ['projectName', 'cost', 'agency','sector', 'scopeItem', 'description', 'source', 'sourceDescription']
         widgets = {
             'projectName': forms.TextInput(attrs={'class': 'form-control'}),
             'cost': forms.NumberInput(attrs={'class': 'form-control'}),

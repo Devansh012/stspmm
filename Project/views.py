@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect, redirect,HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Sector,ScopeGroup,ScopeItem, Client, Staff,ContactPerson,ProjectLead, ProjectProposal, Project
 from DCI.models import DCI,DCIGroup,DCIItem
@@ -8,7 +8,7 @@ from .forms import SectorForm,ScopeGroupForm, ScopeItemForm, ClientForm, StaffFo
 # Create your views here.
 
 def sectorList(request):
-    sector = Sector.objects.all()
+    sector = Sector.objects.all().order_by('sectorName')
 
     context = {"sector": sector}
     return render(request, "project/sectorList.html", context)
@@ -44,7 +44,7 @@ def sectorDeleteView(request, id):
     return render(request, "project/sectorDeleteView.html", {'sc': obj})
 
 def scopeGroupList(request):
-    scopeGroups = ScopeGroup.objects.all()
+    scopeGroups = ScopeGroup.objects.all().order_by('name')
     context = {"scopeGroups": scopeGroups}
     return render(request, "project/scopeGroupList.html", context)
 
@@ -92,7 +92,7 @@ def scopeGroupDeleteView(request, id):
 
 def scopeItemListHTMX(request, id):
     scopeGroup = get_object_or_404(ScopeGroup, id=id)
-    scopeItems = ScopeItem.objects.filter(scopeGroup=scopeGroup)
+    scopeItems = ScopeItem.objects.filter(scopeGroup=scopeGroup).order_by('name')
     
     context = {
         "scopeItems": scopeItems,
@@ -156,7 +156,7 @@ def scopeItemDeleteView(request, id):
 
 
 def clientList(request):
-    client = Client.objects.all()
+    client = Client.objects.all().order_by('name')
 
     context = {"client": client}
     return render(request, "project/clientList.html", context)
@@ -284,9 +284,17 @@ def cpDeleteView(request, id):
 
 
 def plList(request):
-    projectLeads = ProjectLead.objects.all()
+    # Order by projectName field in ascending order
+    projectLeads = ProjectLead.objects.all().order_by('projectName')
     context = {"projectLeads": projectLeads}
     return render(request, "project/plList.html", context)
+
+def plDetailView(request, id):
+    projectLead = get_object_or_404(ProjectLead, id=id)
+    context = {
+        'projectLead': projectLead
+    }
+    return render(request, 'project/plDetail.html', context)
 
 
 def plCreateView(request):
@@ -317,9 +325,10 @@ def plDeleteView(request, id):
 
 
 def ppList(request, id):
-    projectProposals = ProjectProposal.objects.filter(projectLead=id)
+    projectProposals = ProjectProposal.objects.filter(projectLead=id).order_by('acceptedDate')  # Replace 'proposalName' with your desired field
     projectLead = get_object_or_404(ProjectLead, id=id)
     any_approved = projectProposals.filter(accepted=True).exists()
+    
     context = {
         "projectProposals": projectProposals,
         "projectLead": projectLead,
@@ -327,6 +336,7 @@ def ppList(request, id):
         "any_approved": any_approved
     }
     return render(request, "project/ppList.html", context)
+
 
 
 def ppCreateView(request, id):
@@ -389,20 +399,21 @@ def dciDetailView(request, id):
 
 
 def projectList(request):
-    projects = Project.objects.all()
+    projects = Project.objects.all().order_by('projectName')
     context = {"projects": projects}
     return render(request, "project/projectList.html", context)
 
+
 def projectCreateView(request):
-    form = ProjectForm(request.POST or None)
+    form = ProjectForm(request.POST or None,request.FILES or None)
     
     if form.is_valid():
         form.save()
+        print("hello")
         return redirect("projectList")
-
+    
     context = {"form": form}
     return render(request, "project/projectCreateView.html", context)
-
 def projectUpdateView(request, id):
     obj = get_object_or_404(Project, id=id)
     form = ProjectForm(request.POST or None, request.FILES or None, instance=obj)

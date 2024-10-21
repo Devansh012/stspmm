@@ -42,16 +42,18 @@ class TaskActivitiesForm(forms.ModelForm):
         model = TaskActivities
         fields = '__all__'
         widgets = {
-            'dateOfEntry': forms.HiddenInput(),  # Hide the dateOfEntry field if you want to prevent it from being edited
-            'entryDoneBy': forms.HiddenInput(),  # Hide the entryDoneBy field from the form
+            'dateOfEntry': forms.HiddenInput(),  # Hide the dateOfEntry field
+            'entryDoneBy': forms.HiddenInput(),  # Hide the entryDoneBy field
             'completionDate': forms.DateInput(attrs={'type': 'date'}),  # Date picker for completionDate
             'activityDescription': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),  # Set rows to 3
-
+            'task': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'})  # Make task read-only
         }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
+        task_instance = kwargs.pop('task_instance', None)  # Get the task instance if available
         super().__init__(*args, **kwargs)
+
         # Apply form-control class to all fields
         apply_form_control(self.fields)
 
@@ -59,6 +61,10 @@ class TaskActivitiesForm(forms.ModelForm):
             self.fields['entryDoneBy'].initial = user
             self.fields['entryDoneBy'].widget.attrs['readonly'] = True
             self.fields['entryDoneBy'].required = False  # Make sure the field is not required
+
+        if task_instance:
+            self.fields['task'].initial = task_instance  # Set initial value for task
+            self.fields['task'].widget.attrs['disabled'] = 'disabled'  # Ensure it is read-only
 
 # Hinderances Form
 class HinderancesForm(forms.ModelForm):

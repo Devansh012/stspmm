@@ -1,0 +1,27 @@
+{% extends "registration/base.html" %}
+{% block content %}
+<a href="{% url 'plList' %}" style="text-decoration: none;">
+    <button type="button" class="btn btn-secondary btn-sm">
+        <span style="font-size: 1.2em;">&#8592; Back</span>
+    </button>
+</a>
+<h2>Project Lead Details</h2>
+<div class="container mt-4">
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ projectLead.projectName }}</h5>
+            <p><strong>Cost:</strong> {{ projectLead.cost }}</p>
+            <p><strong>Agency:</strong> {{ projectLead.agency }}</p>
+            <p><strong>Sector:</strong> {{ projectLead.sector.name }}</p>
+            <p><strong>Scope Item:</strong> {{ projectLead.scopeItem.name }}</p>
+            <p><strong>Source:</strong> {{ projectLead.source }}</p>
+            <p><strong>Description:</strong> {{ projectLead.description }}</p>
+            <p><strong>Source Description:</strong> {{ projectLead.sourceDescription }}</p>
+            <p><strong>Approved:</strong> {{ projectLead.approved|yesno:"Yes,No" }}</p>
+
+            <!-- Link back to the project lead list -->
+        </div>
+    </div>
+</div>
+{% endblock %}

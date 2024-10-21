@@ -1,5 +1,6 @@
 {% extends "registration/base.html" %}
 {% block content %}
+
 <div class="container mt-4">
     <h3>Add New Project Lead</h3>
 
@@ -10,7 +11,7 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Project Details</h5>
+                        <h5 class="card-title" >Project Details</h5>
                         {{ form.projectName.label }}
                         {{ form.projectName }}
                         <br>
@@ -22,6 +23,7 @@
                         <br>
                         {{ form.sector.label }}
                         {{ form.sector }}
+                        
                     </div>
                 </div>
             </div>
@@ -29,7 +31,7 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Additional Details</h5>
+                        <h5 class="card-title card-title-dark">Additional Details</h5>
                         {{ form.scopeItem.label }}
                         {{ form.scopeItem }}
                         <br>

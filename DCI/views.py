@@ -12,7 +12,7 @@ from .forms import (
 
 
 def dciList(request):
-    dci = DCI.objects.all()
+    dci = DCI.objects.all().order_by('name')
     context = {"dci": dci}
     return render(request, "dci/dciList.html", context)
 
@@ -95,7 +95,7 @@ def copyDci(request, id):
 
 
 def dciOfDciGroup(request, id):
-    dcigroup = DCIGroup.objects.filter(dci=id)
+    dcigroup = DCIGroup.objects.filter(dci=id).order_by('name')
     dci = get_object_or_404(DCI, id=id)
 
     context = {"dciGroup": dcigroup, "id": id, "dci": dci}
@@ -156,7 +156,7 @@ def dciGroupDeleteView(request, id):
 
 def dciItemList(request, id):
     dciGroup = get_object_or_404(DCIGroup, id=id)
-    dciItems = DCIItem.objects.filter(dciGroup=dciGroup)
+    dciItems = DCIItem.objects.filter(dciGroup=dciGroup).order_by('name')
     
     if request.method == "POST":
         upload_form = ExcelUploadForm(request.POST, request.FILES)

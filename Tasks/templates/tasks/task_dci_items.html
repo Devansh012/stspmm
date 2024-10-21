@@ -1,5 +1,4 @@
-{% extends "registration/base.html" %}
-{% block content %}
+
     <h2>DCI Items for Task: {{ task.taskName }}</h2>
     
     <a href="{% url 'tasksList' task.project.id %}" style="text-decoration: none;">
@@ -30,4 +29,4 @@
             {% endfor %}
         </tbody>
     </table>
-{% endblock %}
+

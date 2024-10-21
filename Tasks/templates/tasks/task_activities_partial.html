@@ -39,9 +39,7 @@
                     <td>{{ ta.entryDoneBy }}</td>
                     <td>{{ ta.activityName }}</td>
                     <td class="text-end">
-                        <a href="{% url 'taskActivitiesUpdateView' ta.id %}" hx-get="{% url 'taskActivitiesUpdateView' ta.id %}" hx-target="#modal-body" hx-swap="innerHTML" data-bs-toggle="modal" data-bs-target="#formModal">
-                            <i class="fas fa-edit" aria-hidden="true"></i>
-                        </a>
+                        <a href="{% url 'taskActivitiesUpdateView' ta.id %}" hx-get="{% url 'taskActivitiesUpdateView' ta.id %}" hx-target="#modal-body" hx-swap="innerHTML" data-bs-toggle="modal" data-bs-target="#formModal"><i class="fas fa-edit" aria-hidden="true"></i></a>
                             <form action="{% url 'taskActivitiesDeleteView' ta.id %}" method="post" style="display:inline;" id="delete-form-{{ ta.id }}">
                             {% csrf_token %}
                             <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Task Activity">

@@ -142,4 +142,3 @@ LOGIN_REDIRECT_URL = 'home'  # or '/home/' if not using named URL patterns
 # settings.py
 LOGOUT_REDIRECT_URL = 'home'  # Redirects to the home page after logout
 
-

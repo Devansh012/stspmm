@@ -63,7 +63,7 @@ class ProjectLead(models.Model):
     projectName = models.CharField(max_length=50)
     cost = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     agency = models.CharField(max_length=30, blank=True, null=True)
-    approved = models.BooleanField(default=False,null=True,blank=True)
+    approved = models.BooleanField(default=None,null=True,blank=True)
     description = models.TextField(blank=True, null=True)
     sector = models.ForeignKey(Sector, on_delete=models.CASCADE, blank=True, null=True)
     scopeItem = models.ForeignKey(ScopeItem, on_delete=models.CASCADE, blank=True, null=True)
@@ -109,5 +109,4 @@ class Project(models.Model):
     def __str__(self):
         return self.projectName if self.projectName else "Unnamed Project"
 
-    
 
