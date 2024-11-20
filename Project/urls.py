@@ -47,6 +47,7 @@ urlpatterns = [
 
 
     path('projectList/', views.projectList, name='projectList'),
+    path('dci/<int:pk>/', views.dci_detail_view, name='dciDetailView'),
     path('projectCreateView/', views.projectCreateView, name='projectCreateView'),
     path('projectUpdateView/<id>', views.projectUpdateView, name='projectUpdateView'),
     path('projectDeleteView/<id>', views.projectDeleteView, name='projectDeleteView'),

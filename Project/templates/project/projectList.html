@@ -1,79 +1,74 @@
-{% extends "registration/base.html" %}
+{% extends 'registration/base.html' %}
 {% block content %}
-    <h2>Project List</h2>
-    <!-- Button to create a new Project -->
-    <a href="{% url 'projectCreateView' %}">
-        <button type="button" class="btn btn-primary btn-sm" style="float:right;">
-            Add New
-        </button>
-    </a>
+  {% load static %}
+  <h2 class="card-title-dark">Project List</h2>
+  <!-- Button to create a new Project -->
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <a href="{% url 'projectCreateView' %}"><button type="button" class="btn btn-primary btn-sm" style="float:right;">Add New</button></a>
 
-    <!-- Table displaying Projects -->
-    <table class="table table-striped table-hover mt-5">
-        <thead>
-            <tr>
-                <th class="text-start border">Project Name</th>
-                <th class="text-start border">Cost</th>
-                <th class="text-start border">Agency</th>
-                <th class="text-start border">Final DCI</th>
-                <th class="text-start border">Date Of Commencement</th>
-                <th class="text-start border">Last Date Of Delivery</th>
-                <th class="text-start border">Sector</th>
-                <th class="text-end border">Tasks</th>
-                <th class="text-end border">Submissions</th> <!-- Submissions Column -->
-                <th class="text-end border">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pj in projects %}
-                <tr>
-                    <td class="text-start border">{{ pj.projectName }}</td>
-                    <td class="text-start border">{{ pj.cost }}</td>
-                    <td class="text-start border">{{ pj.agency }}</td>
-                    <td class="text-start border">{{ pj.finalDCI }}</td>
-                    <td class="text-start border">{{ pj.dateOfCommencement }}</td>
-                    <td class="text-start border">{{ pj.lastDateOfDelivery }}</td>
-                    <td class="text-start border">{{ pj.sector }}</td>
+  <!-- Table displaying Projects -->
+  <table class="table table-striped table-hover table-sm mt-5">
+    <thead>
+      <tr>
+        <th class="text-start border">Project Name</th>
+        <th class="text-start border">Cost</th>
+        <th class="text-start border">Agency</th>
+        <th class="text-start border">Final DCI</th>
+        <th class="text-start border">Date Of Commencement</th>
+        <th class="text-start border">Last Date Of Delivery</th>
+        <th class="text-start border">Sector</th>
+        <th class="text-end border">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pj in projects %}
+        <tr>
+          <td class="text-start border">{{ pj.projectName }}</td>
+          <td class="text-start border">{{ pj.cost }}</td>
+          <td class="text-start border">{{ pj.agency }}</td>
+          <td class="text-start border">
+            {% if pj.finalDCI %}
+              <a href="{% url 'dciDetailView' pj.finalDCI.id %}" title="View DCI Items">{{ pj.finalDCI }}</a>
+            {% else %}
+              <span class="text-muted">No DCI</span>
+            {% endif %}
+          </td>
+          <td class="text-start border">{{ pj.dateOfCommencement }}</td>
+          <td class="text-start border">{{ pj.lastDateOfDelivery }}</td>
+          <td class="text-start border">{{ pj.sector }}</td>
 
-                    <!-- Tasks Button -->
-                    <td class="text-end border">
-                        <a href="{% url 'tasksList' pj.id %}" class="mx-4" title="View Task">
-                            <i class="fas fa-tasks" aria-hidden="true"></i>
-                        </a>
-                    </td>
+          <!-- Actions: Tasks, Submissions, Edit, and Delete -->
+          <td class="text-end border">
+            <!-- Tasks Button -->
+            <a href="{% url 'tasksList' pj.id %}" title="View Task"><i class="fas fa-tasks" aria-hidden="true"></i></a>
 
-                    <!-- Show Submissions Button only if the project has submissions -->
-                    <td class="text-end border">
-                        {% if pj.submissions_set.exists %}
-                            <a href="{% url 'projectSubmissionsListView' pj.id %}" class="mx-4" title="View Submissions">
-                                <i class="fas fa-file-alt" aria-hidden="true"></i> <!-- Font Awesome icon for Submissions -->
-                            </a>
-                        {% else %}
-                            <!-- Optionally, you can leave this blank or add a message/icon showing no submissions -->
-                            <span class="text-muted">No Submissions</span>
-                        {% endif %}
-                    </td>
+            <!-- Show Submissions Button only if the project has submissions -->
+            {% if pj.submissions_set.exists %}
+              <a href="{% url 'projectSubmissionsListView' pj.id %}" title="View Submissions"><i class="fas fa-file-alt" aria-hidden="true"></i></a>
+            {% else %}
+              <i class="fas fa-file-alt text-muted" title="No Submissions"></i>
+            {% endif %}
 
-                    <!-- Edit and Delete Actions -->
-                    <td class="text-end border">
-                        <a href="{% url 'projectUpdateView' pj.id %}" title="Edit Project"><i class="fas fa-edit"></i></a>
-                        <form action="{% url 'projectDeleteView' pj.id %}" class="mx-2" title="Delete Project" method="post" style="display:inline;" id="delete-form-{{ pj.id }}">
-                            {% csrf_token %}
-                            <button type="submit" style="border:none; background:none; padding:0;" data-bs-toggle="tooltip" title="Delete Project">
-                                <i class="fas fa-trash"></i> <!-- Font Awesome icon for Delete -->
-                            </button>
-                        </form>
-                        <script>
-                            document.querySelector('#delete-form-{{ pj.id }}').addEventListener('submit', function (event) {
-                                if (!confirm('Are you sure you want to delete this item "{{ pj.projectName }}"?')) {
-                                    event.preventDefault(); // Prevent form submission if the user cancels
-                                }
-                            });
-                        </script>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <!-- Edit Button -->
+            <a href="{% url 'projectUpdateView' pj.id %}" title="Edit Project"><i class="fas fa-edit"></i></a>
 
+            <!-- Delete Form -->
+            <form action="{% url 'projectDeleteView' pj.id %}" method="post" style="display:inline;" id="delete-form-{{ pj.id }}">
+              {% csrf_token %}
+              <button type="submit" style="border:none; background:none; padding:0;" title="Delete Project"><i class="fas fa-trash"></i></button>
+            </form>
+
+            <!-- Delete Confirmation -->
+            <script>
+              document.querySelector('#delete-form-{{ pj.id }}').addEventListener('submit', function (event) {
+                if (!confirm('Are you sure you want to delete this item "{{ pj.projectName }}"?')) {
+                  event.preventDefault() // Prevent form submission if the user cancels
+                }
+              })
+            </script>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

@@ -4,6 +4,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Sector,ScopeGroup,ScopeItem, Client, Staff,ContactPerson,ProjectLead, ProjectProposal, Project
 from DCI.models import DCI,DCIGroup,DCIItem
+from Tasks.models import Tasks
 from .forms import SectorForm,ScopeGroupForm, ScopeItemForm, ClientForm, StaffForm, ContactPersonForm, ProjectLeadForm, ProjectProposalForm, ProjectForm
 # Create your views here.
 
@@ -403,23 +404,73 @@ def projectList(request):
     context = {"projects": projects}
     return render(request, "project/projectList.html", context)
 
+def dci_detail_view(request, pk):
+    # Fetch the DCI object
+    dci = get_object_or_404(DCI, pk=pk)
+
+    # Retrieve all DCIGroups associated with the DCI
+    dci_groups = dci.dcigroup_set.all()
+
+    # Retrieve all DCIItems linked to these DCIGroups
+    dci_items = DCIItem.objects.filter(dciGroup__in=dci_groups)
+
+    # Handle filtering based on query parameter
+    filter_type = request.GET.get('filter', 'all')  # Default to 'all'
+
+    if filter_type == 'with_tasks':
+        dci_items = [item for item in dci_items if Tasks.objects.filter(dciItem=item).exists()]
+    elif filter_type == 'without_tasks':
+        dci_items = [item for item in dci_items if not Tasks.objects.filter(dciItem=item).exists()]
+
+    # Add tasks associated with each DCIItem
+    dci_items_with_tasks = [
+        {
+            "item": item,
+            "tasks": Tasks.objects.filter(dciItem=item)  # Adjust Task model field accordingly
+        }
+        for item in dci_items
+    ]
+
+    # Prepare context data
+    context = {
+        "dci": dci,
+        "dci_groups": dci_groups,
+        "dci_items_with_tasks": dci_items_with_tasks,
+        "filter_type": filter_type,  # Pass the filter type to the template
+    }
+
+    # Render the template
+    return render(request, 'project/dci_detail.html', context)
+
+
+
 
 def projectCreateView(request):
-    form = ProjectForm(request.POST or None,request.FILES or None)
+    form = ProjectForm(request.POST or None, request.FILES or None)
+    print("Form submission received")  # Check if view is triggered
     
     if form.is_valid():
         form.save()
-        print("hello")
+        print("Form is valid and saved")  # Confirm successful save
         return redirect("projectList")
+    else:
+        print("Form errors:", form.errors)  # Log errors for debugging
     
     context = {"form": form}
     return render(request, "project/projectCreateView.html", context)
+
 def projectUpdateView(request, id):
     obj = get_object_or_404(Project, id=id)
     form = ProjectForm(request.POST or None, request.FILES or None, instance=obj)
+    print("Update form submission received")  # Check if view is triggered
+    
     if form.is_valid():
         form.save()
-        return redirect("/project/projectList")
+        print("Form is valid and saved")  # Confirm successful update
+        return redirect("projectList")
+    else:
+        print("Form errors:", form.errors)  # Log errors for debugging
+    
     context = {"form": form}
     return render(request, "project/projectUpdateView.html", context)
 

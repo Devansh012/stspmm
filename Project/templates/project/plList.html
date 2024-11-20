@@ -14,8 +14,6 @@
             <th class="text-start border">Agency</th>
             <th class="text-start border">Source</th>
             <th class="text-start border">Approved</th>
-            <th class="text-start border">Proposal</th> <!-- Merged Column -->
-            <th class="text-end border">Detail View</th>
             <th class="text-end border">Actions</th>
         </tr>
     </thead>
@@ -37,27 +35,17 @@
                         <span class="text-muted mx-5">Unknown</span>
                     {% endif %}
                 </td>
-                
-
                 <!-- Merged Proposal Column -->
-                <td class="text-start border">
+                <td class="text-end border">
                     {% if pl.projectproposal %}
                         <!-- Show View Proposal icon if proposal exists -->
-                        <a href="{% url 'ppList' pl.id %}" class="mx-5" title="View Project Proposal">
-                            <i class="fas fa-file-alt"></i>
-                        </a>
+                        <a href="{% url 'ppList' pl.id %}"  title="View Project Proposal"><i class="fas fa-file-alt"></i></a>
                     {% else %}
                         <!-- Show Create Proposal icon if no proposal exists -->
-                        <a href="{% url 'ppCreateView' pl.id %}" class="mx-5" title="Create Proposal">
-                            <i class="fas fa-plus-square text-success"></i>
-                        </a>
-                    {% endif %}
-                </td>
-                <td class="text-end border">
-                    <a href="{% url 'plDetailView' pl.id %}">{{ pl.projectName }}</a>
-                </td>
+                        <a href="{% url 'ppCreateView' pl.id %}"  title="Create Proposal"><i class="fas fa-plus-square text-success"></i></a>
+                    {% endif %}                
+                    <a href="{% url 'plDetailView' pl.id %}" title="View Details"><i class="fas fa-info-circle" aria-hidden="true"></i></a>            
                 
-                <td class="text-end border">
                     <!-- Conditionally display Edit and Delete buttons if not approved -->
                     {% if not pl.approved %}
                         <a href="{% url 'plUpdateView' pl.id %}" title="Edit ProjectLead"><i class="fas fa-edit"></i></a>
@@ -75,7 +63,7 @@
                             });
                         </script>
                     {% else %}
-                        <span class="text-muted">N/A</span>
+                        <span class="text-muted"></span>
                     {% endif %}
                 </td>
             </tr>

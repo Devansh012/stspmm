@@ -19,69 +19,46 @@
                 <th class="text-start border">Task Name</th>
                 <th class="text-start border">Assigned To</th>
                 <th class="text-start border">Assignment Date</th>
-                <th class="text-start border">DCI Item</th>
                 <th class="text-start border">Target Date Of Completion</th>
-                <th class="text-start border">Project Name</th>
-                <th class="text-end border">Task Activities</th>
                 <th class="text-end border">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for tk in tasks %}
-            <tr hx-get="{% url 'load_task_activities' tk.id %}" hx-trigger="click" hx-target="#task-activities-{{ tk.id }}" hx-swap="outerHTML" hx-indicator=".activities-icon-{{ tk.id }}">
+            <tr>
                 <td class="text-start border">{{ tk.taskName }}</td>
                 <td class="text-start border">{{ tk.assignedTo }}</td>
                 <td class="text-start border">{{ tk.assignmentDate }}</td>
-                <td class="text-start border">
-                    {% if tk.dciItem.exists %}
-                        <a href="{% url 'taskDCIItemView' tk.id %}" style="text-decoration: underline; color: #007bff;">DCI Items</a>
-                    {% else %}
-                        None
-                    {% endif %}
-                </td>
                 <td class="text-start border">{{ tk.targetDateOfCompletion }}</td>
-                <td class="text-start border">{{ tk.project }}</td>
                 <td class="text-end border">
-                    <i class="fas fa-tasks activities-icon-{{ tk.id }}" aria-hidden="true"></i>
-                </td>
-                <td class="text-end border">
-                    <a href="{% url 'tasksUpdateView' tk.id %}" title="Edit Task"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                    <form action="{% url 'tasksDeleteView' tk.id %}" class="mx-2" method="post" style="display:inline;" id="delete-form-{{ tk.id }}">
+                    <!-- Edit Task -->
+                    <a href="{% url 'tasksUpdateView' tk.id %}" class="mx-2" title="Edit Task"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                
+                    <!-- Delete Task -->
+                    <form action="{% url 'tasksDeleteView' tk.id %}" class="d-inline" method="post" id="delete-form-{{ tk.id }}">
                         {% csrf_token %}
                         <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Task">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
                     </form>
-                    <script>
-                        document.querySelector('#delete-form-{{ tk.id }}').addEventListener('submit', function (event) {
-                            if (!confirm('Are you sure you want to delete this item "{{ tk.taskName }}"?')) {
-                                event.preventDefault();
-                            }
-                        });
-                    </script>
+                
+                    <!-- Task Detail -->
+                    <a href="{% url 'task_detail_view' tk.id %}" class="mx-2" title="View Task Details">
+                        <i class="fas fa-info-circle" aria-hidden="true"></i>
+                    </a>
                 </td>
-            </tr>
-            <tr id="task-activities-{{ tk.id }}" style="display: none;">
-                <!-- Task activities will be loaded here dynamically by HTMX -->
+                
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
     <script>
-        document.querySelectorAll('tr[hx-trigger="click"]').forEach(function (row) {
-            row.addEventListener('click', function () {
-                const targetRow = document.getElementById('task-activities-' + row.getAttribute('hx-target').split('-').pop());
-                const activitiesIcon = row.querySelector('.fas');
-                
-                if (targetRow.style.display === 'none') {
-                    targetRow.style.display = 'table-row';
-                    activitiesIcon.classList.remove('fa-tasks');
-                    activitiesIcon.classList.add('fa-tasks-alt');
-                } else {
-                    targetRow.style.display = 'none';
-                    activitiesIcon.classList.remove('fa-tasks-alt');
-                    activitiesIcon.classList.add('fa-tasks');
+        document.querySelectorAll('form[id^="delete-form-"]').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                const taskName = form.closest('tr').querySelector('td:first-child').textContent;
+                if (!confirm(`Are you sure you want to delete this task: "${taskName}"?`)) {
+                    event.preventDefault();
                 }
             });
         });

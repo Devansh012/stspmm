@@ -11,6 +11,7 @@ class Tasks(models.Model):
     assignmentDate = models.DateField(auto_now_add=True,blank=True, null=True)
     completed = models.BooleanField(default=False, blank=True, null=True)
     targetDateOfCompletion = models.DateField(null=True, blank=True)
+    actualDateOfCompletion = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return str (self.project)

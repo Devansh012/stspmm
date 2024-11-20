@@ -1,0 +1,103 @@
+{% extends "registration/base.html" %}
+{% block content %}
+    <h2>Task Details</h2>
+
+    <a href="{% url 'tasksList' task.project.id %}" class="btn btn-secondary btn-sm mb-3">
+        <span style="font-size: 1.2em;">&#8592; Back</span>
+    </a>
+
+    <!-- Task Details -->
+    <h4>Task Information</h4>
+    <table class="table table-bordered">
+        <tr>
+            <th>Task Name</th>
+            <td>{{ task.taskName }}</td>
+        </tr>
+        <tr>
+            <th>Assigned To</th>
+            <td>{{ task.assignedTo }}</td>
+        </tr>
+        <tr>
+            <th>Assignment Date</th>
+            <td>{{ task.assignmentDate }}</td>
+        </tr>
+        <tr>
+            <th>Target Date of Completion</th>
+            <td>{{ task.targetDateOfCompletion }}</td>
+        </tr>
+        <tr>
+            <th>Actual Date of Completion</th>
+            <td>{{ task.actualDateOfCompletion }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ task.taskDescription }}</td>
+        </tr>
+    </table>
+
+    <!-- Associated DCI Items -->
+    <h4>Associated DCI Items</h4>
+    {% if dci_items %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Item Code</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dci in dci_items %}
+                <tr>
+                    <td>{{ dci.name }}</td>
+                    <td>{{ dci.itemCode }}</td>
+                    <td>{{ dci.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No associated DCI Items.</p>
+    {% endif %}
+
+    <!-- Task Activities -->
+    <h4>Task Activities</h4>
+    <a href="{% url 'taskActivitiesCreateView' task.id %}" style="float:right;" class="btn btn-primary btn-sm mb-3">Add New</a>  <!-- Add New Activity Button -->
+    
+    {% if task_activities %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Activity Name</th>
+                    <th>Description</th>
+                    <th>Date of Entry</th>
+                    <th>Completed</th>
+                    <th>Actions</th>  <!-- Column for Edit and Delete -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in task_activities %}
+                <tr>
+                    <td>{{ activity.activityName }}</td>
+                    <td>{{ activity.activityDescription }}</td>
+                    <td>{{ activity.dateOfEntry }}</td>
+                    <td>{{ activity.completed|yesno:"Yes,No" }}</td>
+                    <td class="text-end border">
+                        <a href="{% url 'taskActivitiesUpdateView' activity.id %}"  title="Edit Task"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                    
+                        <!-- Delete Task -->
+                        <form action="{% url 'taskActivitiesDeleteView' activity.id %}" class="d-inline" method="post" id="delete-form-{{ activity.id }}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; cursor: pointer;" title="Delete Task">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No activities recorded for this task.</p>
+    {% endif %}
+{% endblock %}

@@ -32,6 +32,8 @@ class DCIItem(models.Model):
     dci = models.ForeignKey('DCI', on_delete=models.CASCADE, blank=True,null=True)
     createdBy = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     createdDate = models.DateField(auto_now_add=True,blank=True, null=True)
+    completed = models.BooleanField(default=False,blank=True,null=True)
+    dateOfCompletion = models.DateField(auto_now_add=True,blank=True,null=True)
 
     def __str__(self):
         if self.name:

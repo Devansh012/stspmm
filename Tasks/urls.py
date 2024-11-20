@@ -8,6 +8,7 @@ urlpatterns = [
     path('tasksDeleteView/<int:id>/', views.tasksDeleteView, name="tasksDeleteView"),
     path('tasks/<int:task_id>/dci-items/', views.task_dci_item_view, name='taskDCIItemView'),
     path('tasks/<int:task_id>/activities/', views.load_task_activities, name='load_task_activities'),
+    path('tasks/<int:pk>/', views.task_detail_view, name='task_detail_view'),
 
 
     path('taskActivitiesList/<int:id>', views.taskActivitiesList, name='taskActivitiesList'),
