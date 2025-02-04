@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Explorer</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>File Explorer</h1>
+        <div id="tree"></div>
+    </div>
+
+    <!-- Safely pass JSON data to JavaScript -->
+    {{ flat_data_json|json_script:"flat-data" }}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+    <script>
+        // Retrieve JSON data from the script tag
+        const categories = JSON.parse(document.getElementById('flat-data').textContent);
+    
+        // Log the flat data to check if it's correctly passed
+        console.log('Flat Data:', categories);
+    
+        // Function to build a tree from flat data
+        function buildTree(data, parentId = null) {
+            // Ensure the parentId is a string, and filter the data accordingly
+            return data
+                .filter(item => (item.parentID === parentId || (parentId === null && item.parentID === null)))
+                .map(item => {
+                    const children = buildTree(data, item.id);
+                    return children.length > 0
+                        ? { text: item.name, id: item.id, nodes: children }
+                        : { text: item.name, id: item.id };
+                });
+        }
+    
+        // Convert flat data into tree structure
+        const treeData = buildTree(categories);
+    
+        // Log the tree structure to see if it's built correctly
+        console.log('Tree Data:', treeData);
+    
+        // Initialize Bootstrap Treeview
+        $(document).ready(function () {
+            $('#tree').treeview({ data: treeData });
+        });
+    </script>   
+    
+</body>
+</html>

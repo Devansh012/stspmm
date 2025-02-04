@@ -1,6 +1,97 @@
 .card-title-dark {
-    background-color: #1ea06c; /* Bootstrap dark color */
+    background-color: #7736a3; /* Bootstrap dark color */
     color: white;
     padding: 10px;
     border-radius: 5px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: hidden; /* Prevent horizontal and vertical scrolling */
+    background-color: #f0f4f8; /* Light gray background */
+}
+
+.full-vh-vw {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main-container {
+    display: flex;
+    flex: 1; /* Takes up remaining space */
+}
+
+.sidebar {
+    width: 200px; /* Adjust width as needed */
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-right: 1px solid #ddd; /* Optional: for visual separation */
+}
+
+.content {
+    flex: 1; /* Takes up remaining space */
+    padding: 5px;
+    margin: 0px;
+}
+
+header, footer {
+    background: #f8f9fa; /* Light background for header and footer */
+    padding: 10px;
+    border-bottom: 1px solid #ddd; /* Optional: for visual separation */
+}
+
+footer {
+    border-top: 1px solid #ddd; /* Optional: for visual separation */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin-bottom: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.top-right-button {
+    position: absolute;
+    top: 10px; /* Adjust this value as needed */
+    right: 20px; /* Adjust this value as needed */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9; /* Light gray for odd rows */
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: #ffffff; /* White for even rows */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e9ecef; /* Light gray for row hover effect */
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+/* Table header background color and text color */
+.table thead th {
+    background-color: #007bff; /* Blue background color for the heading */
+    color: white; /* White text color for better contrast */
+    text-align: center; /* Center-align text */
+}
+
+/* Optional: Add padding to the table headers for better spacing */
+.table th {
+    padding: 1rem; /* Adjust padding as needed */
 }

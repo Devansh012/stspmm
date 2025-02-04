@@ -1,8 +1,10 @@
+import json
 from django.shortcuts import get_object_or_404, render, redirect,HttpResponse
 from django.contrib import messages
 from .models import Document, Folder
 from .forms import DocumentForm, FolderForm
 from django.http import FileResponse
+from django.core.serializers import serialize
 
 # Create your views here.
 def folderList(request):
@@ -123,3 +125,34 @@ def documentDeleteView(request, id):
         document.delete()
         return redirect('documentList', id=document.folder.id)
     return redirect('documentList', id=document.folder.id)
+
+
+
+
+def file_explorer(request):
+    # Fetch all folders and documents
+    folders = Folder.objects.all()
+    documents = Document.objects.all()
+
+    # Convert folders and documents into a flat structure
+    flat_data = []
+    for folder in folders:
+        flat_data.append({
+            'id': f"folder_{folder.id}",
+            'name': folder.name,
+            'parentID': f"folder_{folder.parentFolder.id}" if folder.parentFolder else None,
+            'type': 'folder'
+        })
+
+    for document in documents:
+        flat_data.append({
+            'id': f"document_{document.id}",
+            'name': document.name,
+            'parentID': f"folder_{document.folder.id}" if document.folder else None,
+            'type': 'document'
+        })
+
+    # Convert the flat data to JSON
+    flat_data_json = json.dumps(flat_data, indent=4)
+
+    return render(request, 'docs/file_explorer.html', {'flat_data_json': flat_data_json})
