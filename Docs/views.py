@@ -128,7 +128,6 @@ def documentDeleteView(request, id):
 
 
 
-
 def file_explorer(request):
     # Fetch all folders and documents
     folders = Folder.objects.all()
@@ -136,6 +135,8 @@ def file_explorer(request):
 
     # Convert folders and documents into a flat structure
     flat_data = []
+    
+    # Convert folders to JSON format
     for folder in folders:
         flat_data.append({
             'id': f"folder_{folder.id}",
@@ -144,6 +145,7 @@ def file_explorer(request):
             'type': 'folder'
         })
 
+    # Convert documents to JSON format
     for document in documents:
         flat_data.append({
             'id': f"document_{document.id}",
@@ -152,7 +154,7 @@ def file_explorer(request):
             'type': 'document'
         })
 
-    # Convert the flat data to JSON
-    flat_data_json = json.dumps(flat_data, indent=4)
+    # Convert Python None to JSON null and pass it safely to the template
+    flat_data_json = json.dumps(flat_data)  
 
     return render(request, 'docs/file_explorer.html', {'flat_data_json': flat_data_json})

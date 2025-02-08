@@ -10,46 +10,80 @@
 <body>
     <div class="container">
         <h1>File Explorer</h1>
-        <div id="tree"></div>
+        <div class="row">
+            <!-- Folder Tree -->
+            <div class="col-md-6">
+                <div id="tree"></div>
+            </div>
+            <!-- Document List -->
+            <div class="col-md-6">
+                <div id="documents">
+                    <h3>Documents</h3>
+                    <ul class="list-group"></ul>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Safely pass JSON data to JavaScript -->
-    {{ flat_data_json|json_script:"flat-data" }}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+
     <script>
-        // Retrieve JSON data from the script tag
-        const categories = JSON.parse(document.getElementById('flat-data').textContent);
-    
-        // Log the flat data to check if it's correctly passed
-        console.log('Flat Data:', categories);
-    
-        // Function to build a tree from flat data
+        // Parse JSON string into a valid JavaScript object
+        const categories = JSON.parse('{{ flat_data_json|escapejs }}');
+        console.log('Parsed Categories:', categories);
+        console.log('Is Array:', Array.isArray(categories)); // Should be true
+
+        // Function to build a tree with only folders
         function buildTree(data, parentId = null) {
-            // Ensure the parentId is a string, and filter the data accordingly
             return data
-                .filter(item => (item.parentID === parentId || (parentId === null && item.parentID === null)))
-                .map(item => {
-                    const children = buildTree(data, item.id);
-                    return children.length > 0
-                        ? { text: item.name, id: item.id, nodes: children }
-                        : { text: item.name, id: item.id };
+                .filter(item => item.type === "folder" && String(item.parentID) === String(parentId)) // Only folders
+                .map(folder => {
+                    const children = buildTree(data, folder.id);
+                    return {
+                        text: folder.name,
+                        id: folder.id,
+                        nodes: children.length > 0 ? children : undefined
+                    };
                 });
         }
-    
+
+        // Function to display documents when a folder is clicked
+        function showDocuments(folderId) {
+            const documents = categories.filter(doc => doc.type === "document" && doc.parentID === folderId);
+            let docListHtml = "<h3>Documents</h3><ul class='list-group'>";
+            if (documents.length > 0) {
+                documents.forEach(doc => {
+                    docListHtml += `<li class="list-group-item">${doc.name}</li>`;
+                });
+            } else {
+                docListHtml += "<li class='list-group-item'>No documents found</li>";
+            }
+            docListHtml += "</ul>";
+            document.getElementById("documents").innerHTML = docListHtml;
+        }
+
         // Convert flat data into tree structure
         const treeData = buildTree(categories);
-    
-        // Log the tree structure to see if it's built correctly
-        console.log('Tree Data:', treeData);
-    
-        // Initialize Bootstrap Treeview
+        console.log('Final Tree Data:', treeData);
+
+        // Initialize Bootstrap Treeview with folder icons
         $(document).ready(function () {
-            $('#tree').treeview({ data: treeData });
+            if (treeData.length > 0) {
+                $('#tree').treeview({
+                    data: treeData,
+                    expandIcon: "glyphicon glyphicon-folder-close",  // Closed folder icon
+                    collapseIcon: "glyphicon glyphicon-folder-open", // Open folder icon
+                    onNodeSelected: function (event, node) {
+                        showDocuments(node.id);
+                    }
+                });
+            } else {
+                console.error("Tree data is empty. Check the JSON and buildTree function.");
+            }
         });
-    </script>   
+    </script>
     
 </body>
 </html>
